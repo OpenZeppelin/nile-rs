@@ -6,4 +6,4 @@ Nile is a CLI tool to develop or interact with StarkNet projects written in Cair
 
 ## Feature Parity
 
-For the current status of the features migration from Python check [this doc]()
+For the current status of the features migration from Python check [this page](https://github.com/ericnordelo/nile-rs/blob/main/docs/FEATURE_PARITY.md).
