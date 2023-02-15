@@ -1,3 +1,4 @@
+use crate::commands::compile::{cairo_to_sierra::CompileCairoToSierra, sierra_to_casm::CompileSierraToCasm};
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
@@ -12,8 +13,13 @@ pub struct Cli {
 pub enum Commands {
     /// Compile Cairo Smart Contracts
     #[command()]
-    Compile {
-    },
+    Compile {},
+
+    #[clap(about = "Compile Cairo1 contracts to Sierra.")]
+    CompileCairo(CompileCairoToSierra),
+
+    #[clap(about = "Compile Sierra artifacts to Casm.")]
+    CompileSierra(CompileSierraToCasm),
 }
 
 #[test]
