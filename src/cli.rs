@@ -1,4 +1,6 @@
-use crate::commands::compile::{cairo_to_sierra::CompileCairoToSierra, sierra_to_casm::CompileSierraToCasm};
+use crate::commands::compile::{
+    cairo_to_sierra::CompileCairoToSierra, sierra_to_casm::CompileSierraToCasm,
+};
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
