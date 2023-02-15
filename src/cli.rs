@@ -12,8 +12,7 @@ pub struct Cli {
 pub enum Commands {
     /// Compile Cairo Smart Contracts
     #[command()]
-    Compile {
-    },
+    Compile {},
 }
 
 #[test]
