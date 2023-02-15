@@ -1,6 +1,7 @@
 # OpenZeppelin | Nile ⛵ - Rust version
 
 [![Coverage Status](https://codecov.io/gh/OpenZeppelin/nile-rs/graph/badge.svg)](https://codecov.io/gh/OpenZeppelin/nile-rs)
+[![Tests and linter](https://github.com/OpenZeppelin/nile-rs/actions/workflows/ci.yml/badge.svg)](https://github.com/OpenZeppelin/nile-rs/actions/workflows/ci.yml)
 
 ## Overview
 
