@@ -10,3 +10,15 @@ Nile is a CLI tool to develop or interact with StarkNet projects written in Cair
 ## Feature Parity
 
 For the current status of the features migration from Python check [this page](https://github.com/ericnordelo/nile-rs/blob/main/docs/FEATURE_PARITY.md).
+
+## Testing features
+
+While we have the intention to release to [crates.io](https://crates.io) as soon as the [cairo crates](https://github.com/starkware-libs/cairo/tree/main/crates) get released, in the meantime, you can try cloning this repository and checking the currently available features from the `main` branch running:
+
+```
+cargo run -- --help
+```
+
+## License
+
+Nile is released under the MIT License.
