@@ -87,23 +87,25 @@ jobs:
           command: doc
           args: --no-deps --document-private-items --all-features --workspace --examples
 
-  publish-dry-run:
-    name: Publish dry run
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          profile: minimal
-          override: true
-      - uses: Swatinem/rust-cache@v2
-      - uses: actions-rs/cargo@v1
-        with:
-          command: publish
-          args: --dry-run
+  # Commented until the cairo-lang packages get published
+  #
+  # publish-dry-run:
+  #   name: Publish dry run
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v3
+  #     - name: Install Rust toolchain
+  #       uses: actions-rs/toolchain@v1
+  #       with:
+  #         toolchain: stable
+  #         profile: minimal
+  #         override: true
+  #     - uses: Swatinem/rust-cache@v2
+  #     - uses: actions-rs/cargo@v1
+  #       with:
+  #         command: publish
+  #         args: --dry-run
 
   coverage:
     name: Code coverage
@@ -117,6 +119,9 @@ jobs:
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@cargo-llvm-cov
       - name: Generate code coverage
-        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
+        run: >
+          CARGO_LLVM_COV_TARGET_DIR=cov-target/ cargo llvm-cov
+          --all-features --workspace --lcov --output-path lcov.info
+          --ignore-filename-regex cov-target
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
