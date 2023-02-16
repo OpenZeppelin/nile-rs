@@ -39,3 +39,90 @@ impl Default for Config {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn toml_provider() {
+        figment::Jail::expect_with(|jail| {
+            jail.create_file(
+                "nile-rs.toml",
+                r#"
+            contracts_dir = "other_contracts/"
+            artifacts_dir = "other_artifacts/"
+          "#,
+            )?;
+            let config: Config = Config::get()?;
+
+            assert_eq!(config.contracts_dir, "other_contracts/");
+            assert_eq!(config.artifacts_dir, "other_artifacts/");
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn env_provider() {
+        figment::Jail::expect_with(|jail| {
+            jail.set_env("NILE_RS_CONTRACTS_DIR", "other_contracts/");
+            jail.set_env("NILE_RS_ARTIFACTS_DIR", "other_artifacts/");
+
+            let config: Config = Config::get()?;
+
+            assert_eq!(config.contracts_dir, "other_contracts/");
+            assert_eq!(config.artifacts_dir, "other_artifacts/");
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn combined_providers() {
+        figment::Jail::expect_with(|jail| {
+            jail.create_file(
+                "nile-rs.toml",
+                r#"
+            contracts_dir = "other_contracts/"
+          "#,
+            )?;
+            jail.set_env("NILE_RS_ARTIFACTS_DIR", "other_artifacts/");
+
+            let config: Config = Config::get()?;
+
+            assert_eq!(config.contracts_dir, "other_contracts/");
+            assert_eq!(config.artifacts_dir, "other_artifacts/");
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn providers_precedence() {
+        figment::Jail::expect_with(|jail| {
+            jail.set_env("NILE_RS_CONTRACTS_DIR", "contracts_env/");
+            jail.create_file(
+                "nile-rs.toml",
+                r#"
+            contracts_dir = "contracts_toml/"
+          "#,
+            )?;
+
+            let config: Config = Config::get()?;
+
+            assert_eq!(config.contracts_dir, "contracts_env/");
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn abis_dir() {
+        figment::Jail::expect_with(|jail| {
+            jail.set_env("NILE_RS_ARTIFACTS_DIR", "artifacts_env");
+
+            let config: Config = Config::get()?;
+            let abis_dir = config.abis_dir();
+
+            assert_eq!(abis_dir, "artifacts_env/abis/");
+            Ok(())
+        });
+    }
+}
