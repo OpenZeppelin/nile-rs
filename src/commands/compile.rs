@@ -6,7 +6,7 @@ use clap::Parser;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use crate::common::{ABIS_DIRECTORY, BUILD_DIRECTORY, CONTRACTS_DIRECTORY};
+use crate::config::Config;
 use crate::utils::fs::{get_abi_from_sierra, get_all_contracts};
 use cairo_to_sierra::CompileCairoToSierra;
 use sierra_to_casm::CompileSierraToCasm;
@@ -35,12 +35,15 @@ impl Compiler for Compile {
     type Output = ();
 
     fn run(self) -> Result<Self::Output> {
+        let config = Config::get()?;
+        let abis_dir = config.abis_dir();
+
         let contracts = self.contracts;
         let directory = self.directory;
 
         let contracts_directory = match directory {
             Some(dir) => dir,
-            None => String::from(CONTRACTS_DIRECTORY),
+            None => String::from(&config.contracts_dir),
         };
 
         let contracts = match contracts {
@@ -49,7 +52,7 @@ impl Compiler for Compile {
         };
 
         // Create the artifacts folders if don't exist
-        fs::create_dir_all(ABIS_DIRECTORY)?;
+        fs::create_dir_all(&abis_dir)?;
 
         let mut failures = Vec::new();
         let all_contracts = if contracts.is_empty() {
@@ -66,7 +69,8 @@ impl Compiler for Compile {
                 .unwrap()
                 .to_str()
                 .unwrap();
-            let sierra_file = [BUILD_DIRECTORY, file_name, ".sierra"].concat();
+
+            let sierra_file = [&config.artifacts_dir, "/", file_name, ".sierra"].concat();
 
             let compiler = CompileCairoToSierra {
                 path: Option::Some(PathBuf::from(&contract_file)),
@@ -80,11 +84,11 @@ impl Compiler for Compile {
                     // Extract ABI
                     let abi_json = get_abi_from_sierra(&sierra_file);
 
-                    let abi_file = [ABIS_DIRECTORY, file_name, ".json"].concat();
+                    let abi_file = [&abis_dir, file_name, ".json"].concat();
                     fs::write(abi_file, serde_json::to_string_pretty(&abi_json)?)?;
 
                     // Compile to Casm
-                    let casm_file = [BUILD_DIRECTORY, file_name, ".casm"].concat();
+                    let casm_file = [&config.artifacts_dir, "/", file_name, ".casm"].concat();
                     let compiler = CompileSierraToCasm {
                         path: Option::Some(PathBuf::from(&sierra_file)),
                         output: Option::Some(PathBuf::from(&casm_file)),
