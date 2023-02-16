@@ -1,7 +1,7 @@
 use assert_cmd::Command;
-mod utils;
-
 use utils::expected_stdout;
+
+mod utils;
 
 #[test]
 fn test_1() {
