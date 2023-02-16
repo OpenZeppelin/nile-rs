@@ -9,7 +9,6 @@ use clap::Parser;
 use super::Compiler;
 
 #[derive(Parser, Debug)]
-#[command(name = "nile")]
 pub struct CompileSierraToCasm {
     #[clap(
         help = "The path to the Sierra file.",

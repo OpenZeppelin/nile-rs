@@ -1,5 +1,7 @@
 mod cli;
 mod commands;
+mod common;
+mod utils;
 
 use anyhow::{Ok, Result};
 
@@ -11,8 +13,8 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
-        cli::Commands::Compile {} => {
-            commands::compile::compile()?;
+        cli::Commands::Compile (cmd) => {
+            cmd.run()?;
         }
         cli::Commands::CompileCairo(cmd) => {
             cmd.run()?;
