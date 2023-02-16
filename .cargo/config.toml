@@ -1,0 +1,5 @@
+[alias]     # command aliases
+coverage = "llvm-cov --ignore-filename-regex cov-target"
+
+[env]
+CARGO_LLVM_COV_TARGET_DIR = "cov-target/"

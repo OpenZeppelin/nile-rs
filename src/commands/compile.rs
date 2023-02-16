@@ -19,7 +19,15 @@ pub trait Compiler {
 
 #[derive(Parser, Debug)]
 pub struct Compile {
-    #[clap(help = "The contracts directory.", long, short, value_name = "DIR")]
+    #[clap(help = "List of contracts to compile.", value_name = "CONTRACTS")]
+    pub contracts: Option<Vec<String>>,
+
+    #[clap(
+        help = "Compile all contracts inside the specified directory.",
+        long,
+        short,
+        value_name = "DIR"
+    )]
     pub directory: Option<String>,
 }
 
@@ -27,12 +35,17 @@ impl Compiler for Compile {
     type Output = ();
 
     fn run(self) -> Result<Self::Output> {
-        let contracts = Vec::new();
+        let contracts = self.contracts;
         let directory = self.directory;
 
         let contracts_directory = match directory {
             Some(dir) => dir,
             None => String::from(CONTRACTS_DIRECTORY),
+        };
+
+        let contracts = match contracts {
+            Some(c) => c,
+            None => Vec::new(),
         };
 
         // Create the artifacts folders if don't exist
