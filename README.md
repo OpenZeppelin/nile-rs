@@ -13,7 +13,7 @@ For the current status of the features migration from Python check [this page](h
 
 ## Testing features
 
-While we have the intention to release to [crates.io](https://crates.io) as soon as the [cairo crates](https://github.com/starkware-libs/cairo/tree/main/crates) get released, in the meantime, you can try cloning this repository and checking the currently available features from the `main` branch running:
+While we have the intention to release to [crates.io](https://crates.io) as soon as the [cairo crates](https://github.com/starkware-libs/cairo/tree/main/crates) get released, in the meantime, you can clone this repository and check the currently available features from the `main` branch running:
 
 ```
 cargo run -- --help
