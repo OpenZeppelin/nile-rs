@@ -1,5 +1,5 @@
 use crate::commands::compile::{
-    cairo_to_sierra::CompileCairoToSierra, sierra_to_casm::CompileSierraToCasm, Compile
+    cairo_to_sierra::CompileCairoToSierra, sierra_to_casm::CompileSierraToCasm, Compile,
 };
 use clap::{Parser, Subcommand};
 

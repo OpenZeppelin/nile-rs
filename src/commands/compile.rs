@@ -38,14 +38,13 @@ impl Compiler for Compile {
         // Create the artifacts folders if don't exist
         fs::create_dir_all(ABIS_DIRECTORY)?;
 
-        let all_contracts;
         let mut failures = Vec::new();
-        if contracts.len() == 0 {
+        let all_contracts = if contracts.is_empty() {
             println!("🤖 Compiling all Cairo contracts in the {contracts_directory} directory");
-            all_contracts = get_all_contracts(&contracts_directory);
+            get_all_contracts(&contracts_directory)
         } else {
-            all_contracts = contracts;
-        }
+            contracts
+        };
 
         // Compile the contracts
         for contract_file in all_contracts.iter() {

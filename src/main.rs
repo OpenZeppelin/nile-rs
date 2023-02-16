@@ -13,7 +13,7 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
-        cli::Commands::Compile (cmd) => {
+        cli::Commands::Compile(cmd) => {
             cmd.run()?;
         }
         cli::Commands::CompileCairo(cmd) => {

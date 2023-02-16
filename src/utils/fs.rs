@@ -19,7 +19,7 @@ pub fn get_all_contracts(directory: &str) -> Vec<String> {
 pub fn get_abi_from_sierra(sierra_file: &str) -> Value {
     let sierra_json = {
         // Load the first file into a string.
-        let text = std::fs::read_to_string(&sierra_file).unwrap();
+        let text = std::fs::read_to_string(sierra_file).unwrap();
 
         // Parse the string into a dynamically-typed JSON structure.
         serde_json::from_str::<Value>(&text).unwrap()
