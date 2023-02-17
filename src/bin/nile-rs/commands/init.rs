@@ -11,9 +11,17 @@ pub struct Init {}
 const BASE_PROJECT_STRUCTURE: [(&str, &str, &str); 6] = [
     ("./", "Cargo.toml", base_project::CARGO_TOML),
     ("./", ".gitignore", base_project::GITIGNORE),
-    ("./contracts/", "hello_starknet.cairo", base_project::HELLO_STARKNET_CAIRO),
+    (
+        "./contracts/",
+        "hello_starknet.cairo",
+        base_project::HELLO_STARKNET_CAIRO,
+    ),
     ("./scripts/module/", "build.rs", base_project::BUILD_RS),
-    ("./scripts/module/", "Cargo.toml", base_project::SCRIPTS_CARGO_TOML),
+    (
+        "./scripts/module/",
+        "Cargo.toml",
+        base_project::SCRIPTS_CARGO_TOML,
+    ),
     ("./scripts/module/src/", "main.rs", base_project::MAIN_RS),
 ];
 
