@@ -13,7 +13,7 @@
 | get-balance            |        | [#8](https://github.com/OpenZeppelin/nile-rs/issues/8)
 | get-accounts           |        | [#9](https://github.com/OpenZeppelin/nile-rs/issues/9)
 | counterfactual-address |        | [#10](https://github.com/OpenZeppelin/nile-rs/issues/10)
-| init                   |        | [#11](https://github.com/OpenZeppelin/nile-rs/issues/11)
+| init                   | ⏳      | [#11](https://github.com/OpenZeppelin/nile-rs/issues/11)
 | node                   |        | [#12](https://github.com/OpenZeppelin/nile-rs/issues/12)
 | compile                | ✅      | [#1](https://github.com/OpenZeppelin/nile-rs/issues/1)
 | run                    |        | [#13](https://github.com/OpenZeppelin/nile-rs/issues/13)
@@ -24,7 +24,7 @@
 
 | name                   | status | issue
 |------------------------|--------|-------
-| scripting system (nre) |        | [#15](https://github.com/OpenZeppelin/nile-rs/issues/15)
+| scripting system (nre) | ⏳      | [#15](https://github.com/OpenZeppelin/nile-rs/issues/15)
 | compile                |        |
 | call                   |        |
 | get_deployment         |        |
