@@ -2,8 +2,16 @@
 name = "nile-rs"
 version = "0.1.0"
 edition = "2021"
+include = ["/base"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "nile_rs"
+path = "src/nile-rs/lib.rs"
+
+[[bin]]
+name = "nile-rs"
+test = false
+doc = false
 
 [dependencies]
 clap = { version = "4.1.4", features = ["derive"] }

@@ -6,7 +6,7 @@ use cairo_lang_starknet::casm_contract_class::CasmContractClass;
 use cairo_lang_starknet::contract_class::ContractClass;
 use clap::Parser;
 
-use super::Compiler;
+use super::CliCommand;
 
 #[derive(Parser, Debug)]
 pub struct CompileSierraToCasm {
@@ -27,7 +27,7 @@ pub struct CompileSierraToCasm {
     pub output: Option<PathBuf>,
 }
 
-impl Compiler for CompileSierraToCasm {
+impl CliCommand for CompileSierraToCasm {
     type Output = CasmContractClass;
 
     fn run(self) -> Result<Self::Output> {
