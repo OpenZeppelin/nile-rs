@@ -41,7 +41,7 @@ impl CliCommand for Init {
 
         println!("🗄 Creating project directory tree");
         println!("⛵️ Nile project ready! Try running:");
-        println!("");
+        println!();
         println!("nile compile");
 
         Ok(())
