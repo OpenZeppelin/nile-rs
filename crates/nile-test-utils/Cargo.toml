@@ -1,0 +1,10 @@
+[package]
+name = "nile-test-utils"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+doctest = false
+
+[dependencies]
+snapbox = "0.4.6"

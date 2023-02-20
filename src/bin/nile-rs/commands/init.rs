@@ -38,6 +38,10 @@ impl CliCommand for Init {
         for file in BASE_PROJECT_STRUCTURE {
             copy_file(file.0, file.1, file.2)?
         }
+
+        println!("⛵️ Nile project ready! Try running:");
+        println!("nile compile");
+
         Ok(())
     }
 }

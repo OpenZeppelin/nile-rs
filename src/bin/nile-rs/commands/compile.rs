@@ -7,8 +7,8 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use super::CliCommand;
-use crate::config::Config;
 use cairo_to_sierra::CompileCairoToSierra;
+use nile_rs::config::Config;
 use nile_rs::utils::fs::{get_abi_from_sierra, get_all_contracts};
 use sierra_to_casm::CompileSierraToCasm;
 

@@ -1,3 +1,5 @@
+pub mod snapbox;
+
 use std::fs;
 
 const STDOUT_DIR: &str = "tests/fixtures/stdout/";
