@@ -1,10 +1,10 @@
-use nile_test_utils::{expected_stdout, snapbox};
+use nile_test_utils::{expected_stdout, snapbox::get_snapbox};
 
 #[test]
 fn test_init() {
     let pt = assert_fs::TempDir::new().unwrap();
 
-    let assert = snapbox::snapbox()
+    let assert = get_snapbox()
         .arg("init")
         .current_dir(&pt)
         .assert()

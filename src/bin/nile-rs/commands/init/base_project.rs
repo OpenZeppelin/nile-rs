@@ -44,7 +44,7 @@ fn main() {
     .concat();
 
     fs::write(
-        &dest_path,
+        dest_path,
         with_disclosure
             + r#"
 fn main() {

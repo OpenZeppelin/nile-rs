@@ -24,6 +24,9 @@ fn main() -> Result<()> {
         cli::Commands::Init(cmd) => {
             cmd.run()?;
         }
+        cli::Commands::Run(cmd) => {
+            cmd.run()?;
+        }
     };
 
     Ok(())

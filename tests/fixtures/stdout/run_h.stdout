@@ -1,0 +1,10 @@
+Execute a script from the scripts folder.
+
+Usage: nile-rs run <SCRIPT> [ARGS]...
+
+Arguments:
+  <SCRIPT>   The script to execute.
+  [ARGS]...  Arguments for the script.
+
+Options:
+  -h, --help  Print help
