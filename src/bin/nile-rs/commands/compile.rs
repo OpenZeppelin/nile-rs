@@ -6,16 +6,11 @@ use clap::Parser;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use crate::config::Config;
-use crate::utils::fs::{get_abi_from_sierra, get_all_contracts};
+use super::CliCommand;
 use cairo_to_sierra::CompileCairoToSierra;
+use nile_rs::config::Config;
+use nile_rs::utils::fs::{get_abi_from_sierra, get_all_contracts};
 use sierra_to_casm::CompileSierraToCasm;
-
-/// Common trait for all compilers
-pub trait Compiler {
-    type Output;
-    fn run(self) -> Result<Self::Output>;
-}
 
 #[derive(Parser, Debug)]
 pub struct Compile {
@@ -31,7 +26,7 @@ pub struct Compile {
     pub directory: Option<String>,
 }
 
-impl Compiler for Compile {
+impl CliCommand for Compile {
     type Output = ();
 
     fn run(self) -> Result<Self::Output> {

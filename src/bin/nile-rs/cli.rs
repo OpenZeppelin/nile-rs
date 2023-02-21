@@ -1,6 +1,4 @@
-use crate::commands::compile::{
-    cairo_to_sierra::CompileCairoToSierra, sierra_to_casm::CompileSierraToCasm, Compile,
-};
+use crate::commands::{Compile, CompileCairoToSierra, CompileSierraToCasm, Init, Run};
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
@@ -21,6 +19,12 @@ pub enum Commands {
 
     #[clap(about = "Compile Sierra artifacts to Casm.")]
     CompileSierra(CompileSierraToCasm),
+
+    #[clap(about = "Initialize a new Nile project.")]
+    Init(Init),
+
+    #[clap(about = "Execute a script from the scripts folder.")]
+    Run(Run),
 }
 
 #[test]

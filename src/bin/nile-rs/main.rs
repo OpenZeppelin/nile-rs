@@ -1,14 +1,12 @@
 mod cli;
 mod commands;
-mod common;
-mod config;
-mod utils;
 
 use anyhow::{Ok, Result};
 
 use clap::Parser;
+
 use cli::Cli;
-use commands::compile::Compiler;
+use commands::CliCommand;
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
@@ -23,7 +21,13 @@ fn main() -> Result<()> {
         cli::Commands::CompileSierra(cmd) => {
             cmd.run()?;
         }
-    }
+        cli::Commands::Init(cmd) => {
+            cmd.run()?;
+        }
+        cli::Commands::Run(cmd) => {
+            cmd.run()?;
+        }
+    };
 
     Ok(())
 }

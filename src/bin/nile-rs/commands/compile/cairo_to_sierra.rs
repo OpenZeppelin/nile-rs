@@ -5,7 +5,7 @@ use anyhow::{Context, Result};
 use cairo_lang_starknet::contract_class::{compile_path, ContractClass};
 use clap::Parser;
 
-use super::Compiler;
+use super::CliCommand;
 
 #[derive(Parser, Debug)]
 pub struct CompileCairoToSierra {
@@ -29,7 +29,7 @@ pub struct CompileCairoToSierra {
     pub replace_ids: bool,
 }
 
-impl Compiler for CompileCairoToSierra {
+impl CliCommand for CompileCairoToSierra {
     type Output = ContractClass;
 
     fn run(self) -> Result<Self::Output> {
