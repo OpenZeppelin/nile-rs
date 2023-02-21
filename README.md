@@ -13,7 +13,7 @@ For the current status of the features migration from Python check [this page](h
 
 ## Testing features
 
-While we have the intention to release to [crates.io](https://crates.io) soon, but in the meantime, you can clone this repository and check the currently available features from the `main` branch running:
+While we have the intention to release to [crates.io](https://crates.io) soon, in the meantime, you can clone this repository and check the currently available features from the `main` branch running:
 
 ```
 cargo run -- --help
