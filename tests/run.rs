@@ -12,3 +12,17 @@ fn test_run() {
 
     assert.stdout_eq(expected_stdout("run"));
 }
+
+#[test]
+fn test_run_with_arguments() {
+    let pt = assert_fs::TempDir::new().unwrap();
+    let assert = get_snapbox()
+        .current_dir(&pt)
+        .arg("run")
+        .arg("declare")
+        .arg("NAME")
+        .assert()
+        .success();
+
+    assert.stdout_eq(expected_stdout("run"));
+}

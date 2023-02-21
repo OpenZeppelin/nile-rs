@@ -1,6 +1,6 @@
 use super::CliCommand;
 
-use std::process::Command;
+use std::process::{Command, ExitStatus};
 
 use anyhow::{Context, Ok, Result};
 use clap::Parser;
@@ -12,6 +12,18 @@ pub struct Run {
 
     #[clap(help = "Arguments for the script.", value_name = "ARGS")]
     pub args: Vec<String>,
+}
+
+impl Run {
+    fn exec(&self, mut command: Command) -> Result<ExitStatus> {
+        command.status().with_context(|| {
+            format!(
+                "Unable to execute `{}`. \
+                  Check if your script is located under the `./scripts` directory.",
+                &self.script
+            )
+        })
+    }
 }
 
 impl CliCommand for Run {
@@ -32,14 +44,30 @@ impl CliCommand for Run {
             }
         }
 
-        command.status().with_context(|| {
-            format!(
-                "Unable to execute `{}`. \
-                      Check if your script is located under the `./scripts` directory.",
-                &self.script
-            )
-        })?;
+        self.exec(command)?;
 
         Ok(())
     }
+}
+
+#[test]
+fn test_fail_to_exec() {
+    let cli = Run {
+        script: "declare".into(),
+        args: vec![],
+    };
+
+    let command = Command::new("invalid");
+    let result = cli.exec(command);
+    let error = result.unwrap_err();
+
+    // Check top error or context
+    assert_eq!(
+        format!("{}", error),
+        format!(
+            "Unable to execute `{}`. \
+            Check if your script is located under the `./scripts` directory.",
+            &cli.script
+        )
+    );
 }
