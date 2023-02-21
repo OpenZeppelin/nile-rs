@@ -25,7 +25,6 @@ cairo-lang-compiler = "1.0.0-alpha.2"
 
 [dev-dependencies]
 nile-test-utils = { path = "crates/nile-test-utils" }
-cargo-llvm-cov = "0.1.13"
 assert_cmd = "2.0.8"
 assert_fs = "1.0.10"
 snapbox = "0.4.6"
