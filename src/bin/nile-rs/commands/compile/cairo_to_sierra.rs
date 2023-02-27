@@ -2,6 +2,7 @@ use std::fs;
 use std::path::PathBuf;
 
 use anyhow::{Context, Result};
+use cairo_lang_compiler::CompilerConfig;
 use cairo_lang_starknet::contract_class::{compile_path, ContractClass};
 use clap::Parser;
 
@@ -36,7 +37,7 @@ impl CliCommand for CompileCairoToSierra {
         let path = &self.path.unwrap();
         println!("Compiling {}", path.display());
 
-        let contract_class = compile_path(path, self.replace_ids)?;
+        let contract_class = compile_path(path, CompilerConfig::default())?;
         let res = serde_json::to_string_pretty(&contract_class)
             .with_context(|| "Serialization failed.")?;
         match self.output {

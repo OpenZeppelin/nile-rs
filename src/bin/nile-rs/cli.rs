@@ -11,6 +11,9 @@ pub struct Cli {
 
 #[derive(Debug, Subcommand)]
 pub enum Commands {
+    #[clap(about = "Initialize a new Nile project.")]
+    Init(Init),
+
     #[clap(about = "Compile Cairo1 contracts.")]
     Compile(Compile),
 
@@ -19,9 +22,6 @@ pub enum Commands {
 
     #[clap(about = "Compile Sierra artifacts to Casm.")]
     CompileSierra(CompileSierraToCasm),
-
-    #[clap(about = "Initialize a new Nile project.")]
-    Init(Init),
 
     #[clap(about = "Execute a script from the scripts folder.")]
     Run(Run),

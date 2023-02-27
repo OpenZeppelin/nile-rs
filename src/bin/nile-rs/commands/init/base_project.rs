@@ -2,6 +2,11 @@ pub const CARGO_TOML: &str = r#"[workspace]
 members = ["scripts/module"]
 "#;
 
+pub const NILE_TOML: &str = r#"[nile]
+contracts_dir = "contracts/"
+artifacts_dir = "artifacts/"
+"#;
+
 pub const HELLO_STARKNET_CAIRO: &str = r##"#[contract]
 mod HelloStarknet {
     struct Storage {
