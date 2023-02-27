@@ -16,7 +16,7 @@ pub struct Config {
 
 impl Config {
     pub fn get() -> Result<Self, Error> {
-        Config::figment().extract::<Self>()
+        Config::figment().select("nile").extract::<Self>()
     }
 
     pub fn abis_dir(&self) -> String {
@@ -25,7 +25,7 @@ impl Config {
 
     fn figment() -> Figment {
         Figment::from(Serialized::defaults(Config::default()))
-            .merge(Toml::file("nile-rs.toml"))
+            .merge(Toml::file("Nile.toml").nested())
             .merge(Env::prefixed("NILE_RS_"))
     }
 }
@@ -48,8 +48,9 @@ mod tests {
     fn toml_provider() {
         figment::Jail::expect_with(|jail| {
             jail.create_file(
-                "nile-rs.toml",
+                "Nile.toml",
                 r#"
+            [nile]
             contracts_dir = "other_contracts/"
             artifacts_dir = "other_artifacts/"
           "#,
@@ -80,8 +81,9 @@ mod tests {
     fn combined_providers() {
         figment::Jail::expect_with(|jail| {
             jail.create_file(
-                "nile-rs.toml",
+                "Nile.toml",
                 r#"
+            [nile]
             contracts_dir = "other_contracts/"
           "#,
             )?;
@@ -100,15 +102,16 @@ mod tests {
         figment::Jail::expect_with(|jail| {
             jail.set_env("NILE_RS_CONTRACTS_DIR", "contracts_env/");
             jail.create_file(
-                "nile-rs.toml",
+                "Nile.toml",
                 r#"
+            [nile]
             contracts_dir = "contracts_toml/"
           "#,
             )?;
 
             let config: Config = Config::get()?;
 
-            assert_eq!(config.contracts_dir, "contracts_env/");
+            assert_eq!(config.contracts_dir, "contracts_toml/");
             Ok(())
         });
     }

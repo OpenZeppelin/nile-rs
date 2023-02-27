@@ -12,6 +12,9 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
+        cli::Commands::Init(cmd) => {
+            cmd.run()?;
+        }
         cli::Commands::Compile(cmd) => {
             cmd.run()?;
         }
@@ -19,9 +22,6 @@ fn main() -> Result<()> {
             cmd.run()?;
         }
         cli::Commands::CompileSierra(cmd) => {
-            cmd.run()?;
-        }
-        cli::Commands::Init(cmd) => {
             cmd.run()?;
         }
         cli::Commands::Run(cmd) => {

@@ -1,23 +1,21 @@
-extern type System;
-#[derive(Copy, Drop)]
-extern type StorageBaseAddress;
+use traits::Into;
+use traits::TryInto;
+use option::OptionTrait;
+
 #[derive(Copy, Drop)]
 extern type StorageAddress;
-#[derive(Copy, Drop)]
-extern type ContractAddress;
 
-// An Helper function to force the inclusion of `System` in the list of implicits.
-fn use_system_implicit() implicits(System) {}
+#[derive(Copy, Drop)]
+extern type StorageBaseAddress;
 
 // Storage.
-extern fn storage_base_address_const<address>() -> StorageBaseAddress nopanic;
+extern fn storage_base_address_const<const address>() -> StorageBaseAddress nopanic;
 extern fn storage_base_address_from_felt(
     addr: felt
 ) -> StorageBaseAddress implicits(RangeCheck) nopanic;
 extern fn storage_address_from_base_and_offset(
     base: StorageBaseAddress, offset: u8
 ) -> StorageAddress nopanic;
-extern fn storage_address_from_base(base: StorageBaseAddress) -> StorageAddress nopanic;
 
 // Only address_domain 0 is currently supported.
 // This parameter is going to be used to access address spaces with different
@@ -29,25 +27,7 @@ extern fn storage_write_syscall(
     address_domain: felt, address: StorageAddress, value: felt
 ) -> SyscallResult::<()> implicits(GasBuiltin, System) nopanic;
 
-// Interoperability.
-extern fn contract_address_const<address>() -> ContractAddress nopanic;
-extern fn call_contract_syscall(
-    address: ContractAddress, calldata: Array::<felt>
-) -> SyscallResult::<Array::<felt>> implicits(GasBuiltin, System) nopanic;
-
-// Events.
-extern fn emit_event_syscall(
-    keys: Array::<felt>, data: Array::<felt>
-) -> SyscallResult::<()> implicits(GasBuiltin, System) nopanic;
-
-// Getters.
-extern fn get_caller_address_syscall() -> SyscallResult::<felt> implicits(
-    GasBuiltin, System
-) nopanic;
-
-fn get_caller_address() -> felt {
-    get_caller_address_syscall().unwrap_syscall()
-}
+extern fn storage_address_from_base(base: StorageBaseAddress) -> StorageAddress nopanic;
 
 trait StorageAccess<T> {
     fn read(address_domain: felt, base: StorageBaseAddress) -> SyscallResult::<T>;
@@ -81,23 +61,31 @@ impl StorageAccessBool of StorageAccess::<bool> {
 
 impl StorageAccessU8 of StorageAccess::<u8> {
     fn read(address_domain: felt, base: StorageBaseAddress) -> Result::<u8, Array::<felt>> {
-        Result::Ok(u8_from_felt(StorageAccess::<felt>::read(address_domain, base)?))
+        Result::Ok(
+            StorageAccess::<felt>::read(
+                address_domain, base
+            )?.try_into().expect('StorageAccessU8 - non u8')
+        )
     }
     #[inline(always)]
     fn write(
         address_domain: felt, base: StorageBaseAddress, value: u8
     ) -> Result::<(), Array::<felt>> {
-        StorageAccess::<felt>::write(address_domain, base, u8_to_felt(value))
+        StorageAccess::<felt>::write(address_domain, base, value.into())
     }
 }
 
 impl StorageAccessU128 of StorageAccess::<u128> {
     fn read(address_domain: felt, base: StorageBaseAddress) -> SyscallResult::<u128> {
-        Result::Ok(u128_from_felt(StorageAccess::<felt>::read(address_domain, base)?))
+        Result::Ok(
+            StorageAccess::<felt>::read(
+                address_domain, base
+            )?.try_into().expect('StorageAccessU128 - non u128')
+        )
     }
     #[inline(always)]
     fn write(address_domain: felt, base: StorageBaseAddress, value: u128) -> SyscallResult::<()> {
-        StorageAccess::<felt>::write(address_domain, base, u128_to_felt(value))
+        StorageAccess::<felt>::write(address_domain, base, value.into())
     }
 }
 
@@ -106,20 +94,16 @@ impl StorageAccessU256 of StorageAccess::<u256> {
         Result::Ok(
             u256 {
                 low: StorageAccess::<u128>::read(address_domain, base)?,
-                high: u128_from_felt(
-                    storage_read_syscall(
-                        address_domain, storage_address_from_base_and_offset(base, 1_u8)
-                    )?
-                )
+                high: storage_read_syscall(
+                    address_domain, storage_address_from_base_and_offset(base, 1_u8)
+                )?.try_into().expect('StorageAccessU256 - non u256')
             }
         )
     }
     fn write(address_domain: felt, base: StorageBaseAddress, value: u256) -> SyscallResult::<()> {
         StorageAccess::<u128>::write(address_domain, base, value.low)?;
         storage_write_syscall(
-            address_domain,
-            storage_address_from_base_and_offset(base, 1_u8),
-            u128_to_felt(value.high)
+            address_domain, storage_address_from_base_and_offset(base, 1_u8), value.high.into()
         )
     }
 }
@@ -141,3 +125,4 @@ impl SyscallResultTraitImpl<T> of SyscallResultTrait::<T> {
         }
     }
 }
+
