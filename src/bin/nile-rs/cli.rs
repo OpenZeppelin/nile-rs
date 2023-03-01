@@ -1,4 +1,6 @@
-use crate::commands::{Compile, CompileCairoToSierra, CompileSierraToCasm, Init, Run};
+use crate::commands::{
+    Compile, CompileCairoToSierra, CompileSierraToCasm, CounterfactualAddress, Init, Run,
+};
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
@@ -25,6 +27,9 @@ pub enum Commands {
 
     #[clap(about = "Execute a script from the scripts folder.")]
     Run(Run),
+
+    #[clap(about = "Get counterfactual address from signer.")]
+    CounterfactualAddress(CounterfactualAddress),
 }
 
 #[test]

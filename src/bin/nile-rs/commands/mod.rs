@@ -1,10 +1,12 @@
 mod compile;
+mod counterfactual_address;
 mod init;
 mod run;
 
 pub use compile::{
     cairo_to_sierra::CompileCairoToSierra, sierra_to_casm::CompileSierraToCasm, Compile,
 };
+pub use counterfactual_address::CounterfactualAddress;
 pub use init::Init;
 pub use run::Run;
 

@@ -58,9 +58,7 @@ fn test_fail_to_exec() {
     };
 
     let command = Command::new("invalid");
-    let result = cli.exec(command);
-    let error = result.unwrap_err();
-
+    let error = cli.exec(command).unwrap_err();
     // Check top error or context
     assert_eq!(
         format!("{}", error),

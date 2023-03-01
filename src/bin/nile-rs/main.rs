@@ -2,6 +2,7 @@ mod cli;
 mod commands;
 
 use anyhow::{Ok, Result};
+use dotenv::dotenv;
 
 use clap::Parser;
 
@@ -9,6 +10,9 @@ use cli::Cli;
 use commands::CliCommand;
 
 fn main() -> Result<()> {
+    // Load the environment variables from the ".env" file
+    dotenv().ok();
+
     let cli = Cli::parse();
 
     match cli.command {
@@ -25,6 +29,9 @@ fn main() -> Result<()> {
             cmd.run()?;
         }
         cli::Commands::Run(cmd) => {
+            cmd.run()?;
+        }
+        cli::Commands::CounterfactualAddress(cmd) => {
             cmd.run()?;
         }
     };
