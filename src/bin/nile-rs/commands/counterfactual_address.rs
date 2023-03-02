@@ -57,7 +57,7 @@ impl CliCommand for CounterfactualAddress {
 }
 
 #[tokio::test]
-async fn test_pk_env_required() {
+async fn pk_env_required() {
     let command = CounterfactualAddress {
         private_key_env: "NOT_SET".into(),
         salt: None,

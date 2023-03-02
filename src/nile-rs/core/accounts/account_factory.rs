@@ -1,3 +1,5 @@
+use std::io::Read;
+
 use anyhow::{anyhow, Context, Ok, Result};
 use starknet_accounts::{AccountFactory, OpenZeppelinAccountFactory};
 use starknet_core::types::contract::legacy::LegacyContractClass;
@@ -70,4 +72,39 @@ impl OZAccountFactory {
             Err(err) => Err(anyhow!("{err}")).with_context(|| "Failed to execute the deployment"),
         }
     }
+}
+
+
+#[tokio::test]
+async fn pk_env_required() {
+    let error = OZAccountFactory::deploy("NOT_SET", 0, 0, "localhost").await.unwrap_err();
+    // Check top error or context
+    assert_eq!(
+        format!("{}", error),
+        format!("Failed to read the private key from `NOT_SET`",)
+    );
+}
+
+#[tokio::test]
+async fn valid_network_check() {
+    std::env::set_var("SET", "1");
+
+    let error = OZAccountFactory::deploy("SET", 0, 0, "invalid").await.unwrap_err();
+    // Check top error or context
+    assert_eq!(
+        format!("{}", error),
+        format!("Network not found!",)
+    );
+}
+
+#[tokio::test]
+async fn auto_fee_estimation_when_zero() {
+    std::env::set_var("SET", "1");
+
+    let error = OZAccountFactory::deploy("SET", 0, 0, "localhost").await.unwrap_err();
+    // Check top error or context
+    assert_eq!(
+        format!("{}", error),
+        format!("Failed to estimate the fee for deploying transaction",)
+    );
 }

@@ -62,6 +62,6 @@ fn copy_file(to_dir: &str, file: &str, contents: &str) -> Result<()> {
 }
 
 #[test]
-fn test_base_project_len() {
+fn base_project_len() {
     assert_eq!(BASE_PROJECT_STRUCTURE.len(), 7);
 }
