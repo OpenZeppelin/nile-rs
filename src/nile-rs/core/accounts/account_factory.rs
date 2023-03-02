@@ -67,9 +67,7 @@ impl OZAccountFactory {
         let result = deployment.send().await;
         match result {
             std::result::Result::Ok(tx) => Ok(tx),
-            Err(err) => {
-                Err(anyhow!("{err}")).with_context(|| "Failed to execute the deployment")
-            }
+            Err(err) => Err(anyhow!("{err}")).with_context(|| "Failed to execute the deployment"),
         }
     }
 }
