@@ -118,8 +118,8 @@ mod tests {
             artifacts_dir = "other_artifacts/"
 
             networks = [
-                { name = "local1", gateway = "prov1", chain_id = 1 },
-                { name = "local2", gateway = "prov2", chain_id = 2 },
+                { name = "local1", gateway = "prov1", chain_id = "1" },
+                { name = "local2", gateway = "prov2", chain_id = "2" },
             ]
             "#,
             )?;
@@ -202,8 +202,8 @@ mod tests {
                 "Nile.toml",
                 r#"
             networks = [
-                { name = "local1", gateway = "prov1", chain_id = 1 },
-                { name = "local2", gateway = "prov2", chain_id = 2 },
+                { name = "local1", gateway = "prov1", chain_id = "1" },
+                { name = "local2", gateway = "prov2", chain_id = "2" },
             ]
             "#,
             )?;
