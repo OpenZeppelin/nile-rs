@@ -2,6 +2,7 @@ pub mod cairo_to_sierra;
 pub mod sierra_to_casm;
 
 use anyhow::{Ok, Result};
+use async_trait::async_trait;
 use clap::Parser;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -18,7 +19,7 @@ pub struct Compile {
     pub contracts: Option<Vec<String>>,
 
     #[clap(
-        help = "Compile all contracts inside the specified directory.",
+        help = "Compile all contracts inside the specified directory",
         long,
         short,
         value_name = "DIR"
@@ -26,19 +27,20 @@ pub struct Compile {
     pub directory: Option<String>,
 }
 
+#[async_trait]
 impl CliCommand for Compile {
     type Output = ();
 
-    fn run(self) -> Result<Self::Output> {
+    async fn run(&self) -> Result<Self::Output> {
         let config = Config::get()?;
         let abis_dir = config.abis_dir();
 
-        let contracts = self.contracts;
-        let directory = self.directory;
+        let contracts = self.contracts.clone();
+        let directory = self.directory.clone();
 
         let contracts_directory = match directory {
             Some(dir) => dir,
-            None => String::from(&config.contracts_dir),
+            None => config.contracts_dir,
         };
 
         let contracts = match contracts {
@@ -54,7 +56,7 @@ impl CliCommand for Compile {
             println!("🤖 Compiling all Cairo contracts in the {contracts_directory} directory");
             get_all_contracts(&contracts_directory)
         } else {
-            contracts
+            contracts.to_vec()
         };
 
         // Compile the contracts
@@ -73,7 +75,7 @@ impl CliCommand for Compile {
                 replace_ids: false,
             };
 
-            let result = compiler.run();
+            let result = compiler.run().await;
             match result {
                 std::result::Result::Ok(_) => {
                     // Extract ABI
@@ -88,7 +90,7 @@ impl CliCommand for Compile {
                         path: Option::Some(PathBuf::from(&sierra_file)),
                         output: Option::Some(PathBuf::from(&casm_file)),
                     };
-                    compiler.run()?;
+                    compiler.run().await?;
                 }
                 Err(_) => {
                     failures.push(contract_file);

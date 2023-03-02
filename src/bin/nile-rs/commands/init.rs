@@ -2,6 +2,7 @@ mod base_project;
 
 use super::CliCommand;
 use anyhow::{Context, Ok, Result};
+use async_trait::async_trait;
 use clap::Parser;
 use std::fs;
 
@@ -26,11 +27,12 @@ const BASE_PROJECT_STRUCTURE: [(&str, &str, &str); 7] = [
     ("./scripts/module/src/", "main.rs", base_project::MAIN_RS),
 ];
 
+#[async_trait]
 impl CliCommand for Init {
     type Output = ();
 
     /// Generate base project files
-    fn run(self) -> Result<Self::Output> {
+    async fn run(&self) -> Result<Self::Output> {
         let path = std::env::current_dir().unwrap();
         if path.join("Cargo.toml").exists() {
             anyhow::bail!("`nile-rs init` cannot be run on existing Cargo packages")

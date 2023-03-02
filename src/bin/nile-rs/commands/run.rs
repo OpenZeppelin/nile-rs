@@ -3,6 +3,7 @@ use super::CliCommand;
 use std::process::{Command, ExitStatus};
 
 use anyhow::{Context, Ok, Result};
+use async_trait::async_trait;
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -26,11 +27,12 @@ impl Run {
     }
 }
 
+#[async_trait]
 impl CliCommand for Run {
     type Output = ();
 
     /// Execute a script under the scripts directory
-    fn run(self) -> Result<Self::Output> {
+    async fn run(&self) -> Result<Self::Output> {
         println!("Running {} script!", self.script);
 
         let mut command = Command::new("cargo");
