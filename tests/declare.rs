@@ -102,9 +102,8 @@ fn test_estimate_fee() {
         .arg("-d")
         .arg("0")
         .arg("--network")
-        .arg("localhost")
+        .arg(network)
         .arg("--estimate-fee")
-        .env("ACCOUNT_1_PK", "1")
         .current_dir(&temp)
         .assert()
         .success();
