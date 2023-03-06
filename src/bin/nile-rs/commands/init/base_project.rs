@@ -36,7 +36,7 @@ use std::fs;
 use std::path::Path;
 
 fn main() {
-    let script = env::var_os("NILE_RS_TARGET_SCRIPT")
+    let script = env::var("NILE_RS_TARGET_SCRIPT")
         .unwrap()
         .into_string()
         .unwrap();

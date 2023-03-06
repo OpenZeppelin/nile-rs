@@ -2,6 +2,7 @@ use std::fs;
 use std::path::PathBuf;
 
 use anyhow::{Context, Result};
+use async_trait::async_trait;
 use cairo_lang_starknet::casm_contract_class::CasmContractClass;
 use cairo_lang_starknet::contract_class::ContractClass;
 use clap::Parser;
@@ -10,16 +11,11 @@ use super::CliCommand;
 
 #[derive(Parser, Debug)]
 pub struct CompileSierraToCasm {
-    #[clap(
-        help = "The path to the Sierra file.",
-        long,
-        short,
-        value_name = "PATH"
-    )]
+    #[clap(help = "The path to the Sierra file", long, short, value_name = "PATH")]
     pub path: Option<PathBuf>,
 
     #[clap(
-        help = "The path to the output Casm file.",
+        help = "The path to the output Casm file",
         long = "out",
         short,
         value_name = "OUTPUT"
@@ -27,11 +23,12 @@ pub struct CompileSierraToCasm {
     pub output: Option<PathBuf>,
 }
 
+#[async_trait]
 impl CliCommand for CompileSierraToCasm {
     type Output = CasmContractClass;
 
-    fn run(self) -> Result<Self::Output> {
-        let path = self.path.unwrap();
+    async fn run(&self) -> Result<Self::Output> {
+        let path = self.path.clone().unwrap();
 
         let contract_class: ContractClass = serde_json::from_str(
             &fs::read_to_string(&path)
@@ -44,7 +41,7 @@ impl CliCommand for CompileSierraToCasm {
         let res = serde_json::to_string_pretty(&casm_contract_class)
             .with_context(|| "Serialization failed.")?;
 
-        match self.output {
+        match &self.output {
             Some(path) => fs::write(path, res).with_context(|| "Failed to write output.")?,
             None => println!("{}", res),
         }

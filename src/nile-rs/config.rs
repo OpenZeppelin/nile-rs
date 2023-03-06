@@ -5,6 +5,7 @@ use figment::{
 use serde::{Deserialize, Serialize};
 
 mod default;
+pub mod types;
 
 #[derive(Deserialize, Serialize)]
 pub struct Config {
@@ -12,11 +13,67 @@ pub struct Config {
     pub contracts_dir: String,
     /// Directory where artifacts are stored
     pub artifacts_dir: String,
+    /// Directory where deployments are stored
+    pub deployments_dir: String,
+    /// Custom networks
+    pub networks: Vec<types::Network>,
 }
 
 impl Config {
     pub fn get() -> Result<Self, Error> {
-        Config::figment().select("nile").extract::<Self>()
+        Config::figment().extract::<Self>()
+    }
+
+    pub fn get_network(name: &str) -> Result<types::Network, Error> {
+        let config = Self::get()?;
+        let result = config
+            .networks
+            .into_iter()
+            .find(|network| network.name == name);
+
+        match result {
+            Some(network) => Ok(network),
+            None => {
+                // Query default networks
+                let base = Self::base_networks();
+                match name {
+                    "localhost" => Ok(base[0].clone()),
+                    "mainnet" => Ok(base[1].clone()),
+                    "goerli" => Ok(base[2].clone()),
+                    "goerli2" => Ok(base[3].clone()),
+                    _ => Err(Error::from(String::from("Network not found!"))),
+                }
+            }
+        }
+    }
+
+    fn base_networks() -> [types::Network; 4] {
+        [
+            types::Network {
+                name: "localhost".into(),
+                gateway: "http://127.0.0.1:5050/gateway".into(),
+                feeder_gateway: None,
+                chain_id: "1536727068981429685321".into(),
+            },
+            types::Network {
+                name: "mainnet".into(),
+                gateway: "https://alpha-mainnet.starknet.io/gateway".into(),
+                feeder_gateway: None,
+                chain_id: "23448594291968334".into(),
+            },
+            types::Network {
+                name: "goerli".into(),
+                gateway: "https://alpha4.starknet.io/gateway".into(),
+                feeder_gateway: None,
+                chain_id: "1536727068981429685321".into(),
+            },
+            types::Network {
+                name: "goerli2".into(),
+                gateway: "https://alpha4-2.starknet.io/gateway".into(),
+                feeder_gateway: None,
+                chain_id: "393402129659245999442226".into(),
+            },
+        ]
     }
 
     pub fn abis_dir(&self) -> String {
@@ -25,18 +82,8 @@ impl Config {
 
     fn figment() -> Figment {
         Figment::from(Serialized::defaults(Config::default()))
-            .merge(Toml::file("Nile.toml").nested())
+            .merge(Toml::file("Nile.toml"))
             .merge(Env::prefixed("NILE_RS_"))
-    }
-}
-
-/// Configuration default values
-impl Default for Config {
-    fn default() -> Config {
-        Config {
-            contracts_dir: default::DEFAULT_CONTRACTS_DIRECTORY.into(),
-            artifacts_dir: default::DEFAULT_BUILD_DIRECTORY.into(),
-        }
     }
 }
 
@@ -45,20 +92,42 @@ mod tests {
     use super::*;
 
     #[test]
+    fn base_networks() {
+        let network = Config::get_network("localhost").unwrap();
+        assert_eq!(network.name, "localhost");
+
+        let network = Config::get_network("mainnet").unwrap();
+        assert_eq!(network.name, "mainnet");
+
+        let network = Config::get_network("goerli").unwrap();
+        assert_eq!(network.name, "goerli");
+
+        let network = Config::get_network("goerli2").unwrap();
+        assert_eq!(network.name, "goerli2");
+
+        let error = Config::get_network("invalid").unwrap_err();
+        assert_eq!(format!("{}", error), format!("Network not found!",));
+    }
+
+    #[test]
     fn toml_provider() {
         figment::Jail::expect_with(|jail| {
             jail.create_file(
                 "Nile.toml",
                 r#"
-            [nile]
             contracts_dir = "other_contracts/"
             artifacts_dir = "other_artifacts/"
-          "#,
+
+            networks = [
+                { name = "local1", gateway = "prov1", chain_id = "1" },
+                { name = "local2", gateway = "prov2", chain_id = "2" },
+            ]
+            "#,
             )?;
             let config: Config = Config::get()?;
 
-            assert_eq!(config.contracts_dir, "other_contracts/");
             assert_eq!(config.artifacts_dir, "other_artifacts/");
+            assert_eq!(config.networks.len(), 2);
             Ok(())
         });
     }
@@ -83,9 +152,8 @@ mod tests {
             jail.create_file(
                 "Nile.toml",
                 r#"
-            [nile]
             contracts_dir = "other_contracts/"
-          "#,
+            "#,
             )?;
             jail.set_env("NILE_RS_ARTIFACTS_DIR", "other_artifacts/");
 
@@ -104,14 +172,13 @@ mod tests {
             jail.create_file(
                 "Nile.toml",
                 r#"
-            [nile]
             contracts_dir = "contracts_toml/"
-          "#,
+            "#,
             )?;
 
             let config: Config = Config::get()?;
 
-            assert_eq!(config.contracts_dir, "contracts_toml/");
+            assert_eq!(config.contracts_dir, "contracts_env/");
             Ok(())
         });
     }
@@ -125,6 +192,25 @@ mod tests {
             let abis_dir = config.abis_dir();
 
             assert_eq!(abis_dir, "artifacts_env/abis/");
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn get_network() {
+        figment::Jail::expect_with(|jail| {
+            jail.create_file(
+                "Nile.toml",
+                r#"
+            networks = [
+                { name = "local1", gateway = "prov1", chain_id = "1" },
+                { name = "local2", gateway = "prov2", chain_id = "2" },
+            ]
+            "#,
+            )?;
+            let network = Config::get_network("local2")?;
+            assert_eq!(network.name, "local2");
+
             Ok(())
         });
     }
