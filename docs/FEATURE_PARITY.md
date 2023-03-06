@@ -4,10 +4,11 @@
 
 | name                   | status | issue
 |------------------------|--------|-------
-| call                   |        | [#2](https://github.com/OpenZeppelin/nile-rs/issues/2)
-| setup                  |        | [#3](https://github.com/OpenZeppelin/nile-rs/issues/3)
+| call                   | ⏳      | [#2](https://github.com/OpenZeppelin/nile-rs/issues/2)
+| setup                  | ✅      | [#3](https://github.com/OpenZeppelin/nile-rs/issues/3)
 | deploy                 |        | [#4](https://github.com/OpenZeppelin/nile-rs/issues/4)
-| send                   |        | [#5](https://github.com/OpenZeppelin/nile-rs/issues/5)
+| declare                | ✅      | [#22](https://github.com/OpenZeppelin/nile-rs/issues/22)
+| send                   | ⏳      | [#5](https://github.com/OpenZeppelin/nile-rs/issues/5)
 | status                 |        | [#6](https://github.com/OpenZeppelin/nile-rs/issues/6)
 | get-nonce              |        | [#7](https://github.com/OpenZeppelin/nile-rs/issues/7)
 | get-balance            |        | [#8](https://github.com/OpenZeppelin/nile-rs/issues/8)
@@ -16,7 +17,7 @@
 | init                   | ✅      | [#11](https://github.com/OpenZeppelin/nile-rs/issues/11)
 | node                   |        | [#12](https://github.com/OpenZeppelin/nile-rs/issues/12)
 | compile                | ⏳      | [#1](https://github.com/OpenZeppelin/nile-rs/issues/1)
-| run                    |        | [#13](https://github.com/OpenZeppelin/nile-rs/issues/13)
+| run                    | ⏳      | [#13](https://github.com/OpenZeppelin/nile-rs/issues/13)
 | clean                  |        | [#14](https://github.com/OpenZeppelin/nile-rs/issues/14)
 | version                | ✅      |
 
