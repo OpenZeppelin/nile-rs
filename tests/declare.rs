@@ -13,7 +13,8 @@ fn test_declare() {
 
     // Register the account locally
     let temp = assert_fs::TempDir::new().unwrap();
-    temp.copy_from("./tests/fixtures", &["artifacts/contract.json"]).unwrap();
+    temp.copy_from("./tests/fixtures", &["artifacts/contract.json"])
+        .unwrap();
 
     assert!(env::set_current_dir(&temp).is_ok());
     DB::save_account(private_key_env, "0x1", "0x2", network).unwrap();
