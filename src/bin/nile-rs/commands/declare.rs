@@ -6,20 +6,6 @@ use nile_rs::utils::devnet::get_predeployed_accounts;
 
 use super::CliCommand;
 
-#[derive(Parser, Debug, Clone)]
-#[clap(group(
-    clap::ArgGroup::new("account")
-        .required(true)
-        .args(&["private-key-env", "devnet-account"]),
-))]
-struct AccountOpts {
-    #[clap(long, short)]
-    private_key_env: Option<String>,
-
-    #[clap(long, short)]
-    devnet_account: Option<String>,
-}
-
 #[derive(Parser, Debug)]
 #[command(group(
   clap::ArgGroup::new("account")

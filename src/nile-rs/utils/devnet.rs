@@ -26,7 +26,6 @@ pub async fn get_predeployed_accounts(network: &str) -> Result<Vec<OZAccount>> {
         .with_context(|| format!("Failed to get the accounts from `{}`", &endpoint))?;
 
     let body = res.text().await?;
-    println!("{}", &endpoint);
 
     let predeployed_accounts: Vec<PredeployedAccount> = serde_json::from_str(&body)?;
     let oz_accounts: Vec<OZAccount> = predeployed_accounts

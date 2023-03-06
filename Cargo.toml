@@ -39,3 +39,4 @@ assert_fs = "1.0.10"
 nile-test-utils = { path = "crates/nile-test-utils"}
 snapbox = "0.4.6"
 httpmock = "0.6.7"
+serial_test = "1"
