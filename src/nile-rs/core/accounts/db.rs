@@ -73,7 +73,15 @@ impl DB {
 
         let mut accounts: Vec<AccountInfo> = vec![];
         if std::path::Path::new(&db_file_name).exists() {
-            accounts = serde_json::from_reader(std::fs::File::open(&db_file_name)?)?;
+            accounts = serde_json::from_reader(std::fs::File::open(&db_file_name)?).with_context(
+                || {
+                    format!(
+                        "Failed to load the existing accounts from `{}`.\n\
+                        Try removing the file if it is empty.",
+                        db_file_name.replace("//", "/")
+                    )
+                },
+            )?;
         };
 
         accounts.push(new_account);
