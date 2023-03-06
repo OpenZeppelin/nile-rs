@@ -23,6 +23,10 @@ impl Network {
     pub fn chain_id_in_felt(&self) -> FieldElement {
         str_to_felt(&self.chain_id)
     }
+
+    pub fn predeployed_accounts_endpoint(&self) -> String {
+        self.gateway.replace("gateway", "predeployed_accounts")
+    }
 }
 
 #[test]

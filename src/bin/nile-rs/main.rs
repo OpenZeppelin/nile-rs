@@ -32,6 +32,9 @@ async fn main() -> Result<()> {
         cli::Commands::CounterfactualAddress(cmd) => {
             cmd.run().await?;
         }
+        cli::Commands::Declare(cmd) => {
+            cmd.run().await?;
+        }
         cli::Commands::Run(cmd) => {
             cmd.run().await?;
         }

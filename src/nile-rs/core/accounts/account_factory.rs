@@ -1,23 +1,28 @@
+use std::fmt::Debug;
+
 use anyhow::{anyhow, Context, Ok, Result};
 use starknet_accounts::{AccountFactory, OpenZeppelinAccountFactory};
-use starknet_core::types::contract::legacy::LegacyContractClass;
 use starknet_core::types::AddTransactionResult;
+use starknet_core::types::{contract::legacy::LegacyContractClass, FeeEstimate};
 use starknet_providers::SequencerGatewayProvider;
-use starknet_signers::{LocalWallet, SigningKey};
-use url::Url;
+use starknet_signers::{LocalWallet, Signer, VerifyingKey};
 
-use crate::common::{artifacts::Account, str_to_felt};
-use crate::config::Config;
+use super::utils::get_network_provider_and_signer;
+use crate::common::artifacts::Account;
 
-pub struct OZAccountFactory {}
+pub struct OZAccountFactory {
+    factory: OpenZeppelinAccountFactory<LocalWallet, SequencerGatewayProvider>,
+    pub public_key: VerifyingKey,
+}
+
+impl Debug for OZAccountFactory {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_tuple("").field(&self.public_key).finish()
+    }
+}
 
 impl OZAccountFactory {
-    pub async fn deploy(
-        private_key_env: &str,
-        salt: u32,
-        max_fee: u128,
-        network: &str,
-    ) -> Result<AddTransactionResult> {
+    pub async fn new(private_key_env: &str, network: &str) -> Result<Self> {
         // Get Account contract class
         let contract_artifact: LegacyContractClass = serde_json::from_str(Account)?;
         let class_hash = contract_artifact.class_hash()?;
@@ -27,42 +32,30 @@ impl OZAccountFactory {
             format!("Failed to read the private key from `{}`", private_key_env)
         })?;
 
-        let network = Config::get_network(network)?;
-
-        // Get provider and signer
-        let provider = SequencerGatewayProvider::new(
-            Url::parse(&network.gateway)?,
-            Url::parse(&network.normalized_feeder_gateway())?,
-        );
-        let signer = LocalWallet::from(SigningKey::from_secret_scalar(str_to_felt(&private_key)));
+        // Get network, provider and signer
+        let (network, provider, signer) = get_network_provider_and_signer(&private_key, network)?;
 
         let factory = OpenZeppelinAccountFactory::new(
             class_hash,
             network.chain_id_in_felt(),
-            signer,
+            signer.clone(),
             provider,
         )
         .await?;
 
-        let deployment = factory.deploy(salt.into());
+        Ok(Self {
+            factory,
+            public_key: signer.get_public_key().await?,
+        })
+    }
 
-        let mut est_fee = max_fee;
-        if max_fee == 0 {
-            est_fee = deployment
-                .estimate_fee()
-                .await
-                .with_context(|| "Failed to estimate the fee for deploying transaction")?
-                .overall_fee
-                .into();
+    /// Execute the deployment
+    pub async fn deploy(&self, salt: u32, max_fee: u64) -> Result<AddTransactionResult> {
+        let mut deployment = self.factory.deploy(salt.into());
+
+        if max_fee > 0 {
+            deployment = deployment.max_fee(max_fee.into());
         }
-
-        println!(
-            "Fund at least {} wei to {:#064x}",
-            est_fee,
-            deployment.address()
-        );
-        println!("Press ENTER after account is funded to continue deployment...");
-        std::io::stdin().read_line(&mut String::new()).unwrap();
 
         let result = deployment.send().await;
         match result {
@@ -70,13 +63,26 @@ impl OZAccountFactory {
             Err(err) => Err(anyhow!("{err}")).with_context(|| "Failed to execute the deployment"),
         }
     }
+
+    /// Estimate the fee for executing the transaction
+    pub async fn estimate_fee(&self, salt: u32) -> Result<FeeEstimate> {
+        let deployment = self.factory.deploy(salt.into());
+
+        let est_fee = deployment
+            .estimate_fee()
+            .await
+            .with_context(|| "Failed to estimate the fee for the deploying transaction")?;
+
+        Ok(est_fee)
+    }
 }
 
 #[tokio::test]
 async fn pk_env_required() {
-    let error = OZAccountFactory::deploy("NOT_SET", 0, 0, "localhost")
+    let error = OZAccountFactory::new("NOT_SET", "localhost")
         .await
         .unwrap_err();
+
     // Check top error or context
     assert_eq!(
         format!("{}", error),
@@ -87,10 +93,8 @@ async fn pk_env_required() {
 #[tokio::test]
 async fn valid_network_check() {
     std::env::set_var("SET", "1");
+    let error = OZAccountFactory::new("SET", "invalid").await.unwrap_err();
 
-    let error = OZAccountFactory::deploy("SET", 0, 0, "invalid")
-        .await
-        .unwrap_err();
     // Check top error or context
     assert_eq!(format!("{}", error), format!("Network not found!",));
 }
@@ -98,13 +102,16 @@ async fn valid_network_check() {
 #[tokio::test]
 async fn auto_fee_estimation_when_zero() {
     std::env::set_var("SET", "1");
+    let factory = OZAccountFactory::new("SET", "localhost").await.unwrap();
 
-    let error = OZAccountFactory::deploy("SET", 0, 0, "localhost")
-        .await
-        .unwrap_err();
-    // Check top error or context
+    let error = factory.deploy(0, 0).await.unwrap_err();
+
+    // Check context
     assert_eq!(
         format!("{}", error),
-        format!("Failed to estimate the fee for deploying transaction",)
+        format!("Failed to execute the deployment",)
     );
+
+    // Check root cause
+    assert!(format!("{}", error.root_cause()).starts_with("error sending request for url"));
 }

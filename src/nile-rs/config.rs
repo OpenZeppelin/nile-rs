@@ -5,7 +5,7 @@ use figment::{
 use serde::{Deserialize, Serialize};
 
 mod default;
-mod types;
+pub mod types;
 
 #[derive(Deserialize, Serialize)]
 pub struct Config {
@@ -13,6 +13,8 @@ pub struct Config {
     pub contracts_dir: String,
     /// Directory where artifacts are stored
     pub artifacts_dir: String,
+    /// Directory where deployments are stored
+    pub deployments_dir: String,
     /// Custom networks
     pub networks: Vec<types::Network>,
 }

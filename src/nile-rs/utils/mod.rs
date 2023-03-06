@@ -1,4 +1,5 @@
 pub mod constants;
+pub mod devnet;
 pub mod fs;
 
 use constants::{ADDR_BOUND, PREFIX_CONTRACT_ADDRESS};
