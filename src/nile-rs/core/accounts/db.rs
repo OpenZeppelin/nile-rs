@@ -41,7 +41,7 @@ impl DB {
         match result {
             Some(acc) => Ok(acc),
             None => Err(anyhow!(
-                "Account not found! If you deployed the account\
+                "Account not found! If the account is deployed\
                 already, try registering it in `{db_file_name}`"
             )),
         }

@@ -1,4 +1,4 @@
-use anyhow::{Ok, Result};
+use anyhow::{Ok, Result, Context};
 use async_trait::async_trait;
 use clap::Parser;
 use nile_rs::core::accounts::OZAccount;
@@ -62,7 +62,9 @@ impl Declare {
             if max_fee > 0 {
                 declaration = declaration.max_fee(max_fee.into());
             }
-            let transaction = declaration.send().await?;
+            let transaction = declaration.send().await.with_context(
+                || "Failed attempt to send the declare transaction"
+            )?;
 
             let class_hash = transaction.class_hash.unwrap();
 
