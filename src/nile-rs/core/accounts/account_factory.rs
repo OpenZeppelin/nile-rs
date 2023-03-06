@@ -4,6 +4,7 @@ use anyhow::{anyhow, Context, Ok, Result};
 use starknet_accounts::{AccountFactory, OpenZeppelinAccountFactory};
 use starknet_core::types::AddTransactionResult;
 use starknet_core::types::{contract::legacy::LegacyContractClass, FeeEstimate};
+use starknet_crypto::FieldElement;
 use starknet_providers::SequencerGatewayProvider;
 use starknet_signers::{LocalWallet, Signer, VerifyingKey};
 
@@ -51,7 +52,7 @@ impl OZAccountFactory {
 
     /// Execute the deployment
     pub async fn deploy(&self, salt: u32, max_fee: u64) -> Result<AddTransactionResult> {
-        let mut deployment = self.factory.deploy(salt.into());
+        let mut deployment = self.factory.deploy(salt.into()).nonce(FieldElement::ZERO);
 
         if max_fee > 0 {
             deployment = deployment.max_fee(max_fee.into());
@@ -66,7 +67,7 @@ impl OZAccountFactory {
 
     /// Estimate the fee for executing the transaction
     pub async fn estimate_fee(&self, salt: u32) -> Result<FeeEstimate> {
-        let deployment = self.factory.deploy(salt.into());
+        let deployment = self.factory.deploy(salt.into()).nonce(FieldElement::ZERO);
 
         let est_fee = deployment
             .estimate_fee()

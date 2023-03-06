@@ -4,6 +4,7 @@ use starknet_core::types::contract::legacy::LegacyContractClass;
 use starknet_crypto::FieldElement;
 use starknet_providers::SequencerGatewayProvider;
 use starknet_signers::LocalWallet;
+use std::fmt::Debug;
 use std::sync::Arc;
 
 use super::db::DB;
@@ -12,6 +13,12 @@ use crate::config::Config;
 
 pub struct OZAccount {
     inner: SingleOwnerAccount<SequencerGatewayProvider, LocalWallet>,
+}
+
+impl Debug for OZAccount {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_tuple("").field(&self.inner.address()).finish()
+    }
 }
 
 /// Wrapper for the starknet-rs SingleOwnerAccount

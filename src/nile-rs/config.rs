@@ -26,7 +26,6 @@ impl Config {
 
     pub fn get_network(name: &str) -> Result<types::Network, Error> {
         let config = Self::get()?;
-
         let result = config
             .networks
             .into_iter()
