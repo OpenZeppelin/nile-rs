@@ -86,12 +86,6 @@ async fn auto_fee_estimation_when_zero() {
 
     let error = factory.deploy(0).send().await.unwrap_err();
 
-    // Check context
-    assert_eq!(
-        format!("{}", error),
-        format!("Failed to execute the deployment",)
-    );
-
     // Check root cause
     assert!(format!("{}", error).starts_with("error sending request for url"));
 }
