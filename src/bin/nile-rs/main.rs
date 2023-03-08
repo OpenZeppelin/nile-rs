@@ -23,15 +23,6 @@ async fn main() -> Result<()> {
         cli::Commands::RawCall(cmd) => {
             cmd.run().await?;
         }
-        cli::Commands::Compile(cmd) => {
-            cmd.run().await?;
-        }
-        cli::Commands::CompileCairo(cmd) => {
-            cmd.run().await?;
-        }
-        cli::Commands::CompileSierra(cmd) => {
-            cmd.run().await?;
-        }
         cli::Commands::CounterfactualAddress(cmd) => {
             cmd.run().await?;
         }

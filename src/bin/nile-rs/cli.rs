@@ -1,5 +1,5 @@
 use crate::commands::{
-    Call, Compile, CompileCairoToSierra, CompileSierraToCasm, CounterfactualAddress, Declare,
+    Call, CounterfactualAddress, Declare,
     Deploy, Init, Run, Send, Setup,
 };
 use clap::{Parser, Subcommand};
@@ -28,15 +28,6 @@ pub enum Commands {
 
     #[clap(about = "Query the blockchain with a function call")]
     RawCall(Call),
-
-    #[clap(about = "Compile Cairo1 contracts")]
-    Compile(Compile),
-
-    #[clap(about = "Compile Cairo1 contracts to Sierra")]
-    CompileCairo(CompileCairoToSierra),
-
-    #[clap(about = "Compile Sierra artifacts to Casm")]
-    CompileSierra(CompileSierraToCasm),
 
     #[clap(about = "Get counterfactual address from signer")]
     CounterfactualAddress(CounterfactualAddress),
