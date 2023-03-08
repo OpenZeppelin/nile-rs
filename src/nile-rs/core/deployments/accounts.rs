@@ -13,11 +13,9 @@ pub struct AccountInfo {
     pub public_key: String,
 }
 
-pub struct DB {}
-
-impl DB {
+impl AccountInfo {
     /// Attempt to get the account data from the file system
-    pub fn load_from_signer(private_key_env: &str, network: &str) -> Result<AccountInfo> {
+    pub fn load_from_signer(private_key_env: &str, network: &str) -> Result<Self> {
         let config = Config::get()?;
         let db_file_name = [
             &config.deployments_dir,
@@ -48,7 +46,7 @@ impl DB {
     }
 
     /// Attempt to save the account data in the file system
-    pub fn save_account(
+    pub fn save(
         private_key_env: &str,
         address: &str,
         public_key: &str,

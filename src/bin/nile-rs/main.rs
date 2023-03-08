@@ -20,6 +20,9 @@ async fn main() -> Result<()> {
         cli::Commands::Init(cmd) => {
             cmd.run().await?;
         }
+        cli::Commands::RawCall(cmd) => {
+            cmd.run().await?;
+        }
         cli::Commands::Compile(cmd) => {
             cmd.run().await?;
         }
@@ -35,7 +38,13 @@ async fn main() -> Result<()> {
         cli::Commands::Declare(cmd) => {
             cmd.run().await?;
         }
+        cli::Commands::Deploy(cmd) => {
+            cmd.run().await?;
+        }
         cli::Commands::Run(cmd) => {
+            cmd.run().await?;
+        }
+        cli::Commands::Send(cmd) => {
             cmd.run().await?;
         }
         cli::Commands::Setup(cmd) => {

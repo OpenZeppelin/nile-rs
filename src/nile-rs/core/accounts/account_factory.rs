@@ -1,15 +1,13 @@
 use std::fmt::Debug;
 
-use anyhow::{anyhow, Context, Ok, Result};
-use starknet_accounts::{AccountFactory, OpenZeppelinAccountFactory};
-use starknet_core::types::AddTransactionResult;
-use starknet_core::types::{contract::legacy::LegacyContractClass, FeeEstimate};
+use anyhow::{Context, Ok, Result};
+use starknet_accounts::{AccountDeployment, AccountFactory, OpenZeppelinAccountFactory};
+use starknet_core::types::contract::legacy::LegacyContractClass;
 use starknet_crypto::FieldElement;
 use starknet_providers::SequencerGatewayProvider;
 use starknet_signers::{LocalWallet, Signer, VerifyingKey};
 
-use super::utils::get_network_provider_and_signer;
-use crate::common::artifacts::Account;
+use crate::common::{artifacts::Account, get_network_provider_and_signer};
 
 pub struct OZAccountFactory {
     factory: OpenZeppelinAccountFactory<LocalWallet, SequencerGatewayProvider>,
@@ -51,30 +49,11 @@ impl OZAccountFactory {
     }
 
     /// Execute the deployment
-    pub async fn deploy(&self, salt: u32, max_fee: u64) -> Result<AddTransactionResult> {
-        let mut deployment = self.factory.deploy(salt.into()).nonce(FieldElement::ZERO);
-
-        if max_fee > 0 {
-            deployment = deployment.max_fee(max_fee.into());
-        }
-
-        let result = deployment.send().await;
-        match result {
-            std::result::Result::Ok(tx) => Ok(tx),
-            Err(err) => Err(anyhow!("{err}")).with_context(|| "Failed to execute the deployment"),
-        }
-    }
-
-    /// Estimate the fee for executing the transaction
-    pub async fn estimate_fee(&self, salt: u32) -> Result<FeeEstimate> {
-        let deployment = self.factory.deploy(salt.into()).nonce(FieldElement::ZERO);
-
-        let est_fee = deployment
-            .estimate_fee()
-            .await
-            .with_context(|| "Failed to estimate the fee for the deploying transaction")?;
-
-        Ok(est_fee)
+    pub fn deploy(
+        &self,
+        salt: u32,
+    ) -> AccountDeployment<OpenZeppelinAccountFactory<LocalWallet, SequencerGatewayProvider>> {
+        self.factory.deploy(salt.into()).nonce(FieldElement::ZERO)
     }
 }
 
@@ -105,7 +84,7 @@ async fn auto_fee_estimation_when_zero() {
     std::env::set_var("SET", "1");
     let factory = OZAccountFactory::new("SET", "localhost").await.unwrap();
 
-    let error = factory.deploy(0, 0).await.unwrap_err();
+    let error = factory.deploy(0).send().await.unwrap_err();
 
     // Check context
     assert_eq!(
@@ -114,5 +93,5 @@ async fn auto_fee_estimation_when_zero() {
     );
 
     // Check root cause
-    assert!(format!("{}", error.root_cause()).starts_with("error sending request for url"));
+    assert!(format!("{}", error).starts_with("error sending request for url"));
 }

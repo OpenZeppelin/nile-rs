@@ -1,6 +1,6 @@
 use assert_fs::prelude::*;
 use httpmock::prelude::*;
-use nile_rs::core::accounts::db::DB;
+use nile_rs::core::Deployments;
 use serde_json::json;
 use serial_test::serial;
 use std::env;
@@ -20,7 +20,7 @@ fn test_declare() {
 
     let cwd = env::current_dir().unwrap();
     assert!(env::set_current_dir(&temp).is_ok());
-    DB::save_account(private_key_env, "0x1", "0x2", network).unwrap();
+    Deployments::save_account(private_key_env, "0x1", "0x2", network).unwrap();
     assert!(env::set_current_dir(cwd).is_ok());
 
     // Mock the provider

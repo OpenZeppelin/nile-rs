@@ -2288,6 +2288,7 @@ dependencies = [
  "serial_test",
  "snapbox",
  "starknet-accounts",
+ "starknet-contract",
  "starknet-core",
  "starknet-crypto",
  "starknet-providers",
@@ -3374,6 +3375,20 @@ dependencies = [
  "starknet-core",
  "starknet-providers",
  "starknet-signers",
+ "thiserror",
+]
+
+[[package]]
+name = "starknet-contract"
+version = "0.1.0"
+source = "git+https://github.com/xJonathanLEI/starknet-rs#2c5f9cdc097e1aa174046c95c9f221980824dc33"
+dependencies = [
+ "serde",
+ "serde_json",
+ "serde_with",
+ "starknet-accounts",
+ "starknet-core",
+ "starknet-providers",
  "thiserror",
 ]
 

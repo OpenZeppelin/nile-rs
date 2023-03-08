@@ -3,8 +3,8 @@ use async_trait::async_trait;
 use clap::Parser;
 
 use super::CliCommand;
-use nile_rs::core::accounts::db::DB;
 use nile_rs::core::accounts::OZAccountFactory;
+use nile_rs::core::Deployments;
 
 #[derive(Parser, Debug)]
 pub struct Setup {
@@ -39,9 +39,11 @@ impl CliCommand for Setup {
     // Setup the Account
     async fn run(&self) -> Result<Self::Output> {
         let factory = OZAccountFactory::new(&self.private_key_env, &self.network).await?;
+        let mut deployment = factory.deploy(self.salt.unwrap_or(0));
+        let max_fee = self.max_fee.unwrap_or(0);
 
         if self.estimate_fee {
-            let fee = factory.estimate_fee(self.salt.unwrap_or(0)).await?;
+            let fee = deployment.estimate_fee().await?;
 
             println!("\nOverall fee: {}", fee.overall_fee);
             println!("Gas price (Wei): {}", fee.gas_price);
@@ -49,14 +51,15 @@ impl CliCommand for Setup {
 
             Ok(())
         } else {
-            let transaction = factory
-                .deploy(self.salt.unwrap_or(0), self.max_fee.unwrap_or(0))
-                .await?;
+            if max_fee > 0 {
+                deployment = deployment.max_fee(max_fee.into());
+            }
+            let transaction = deployment.send().await?;
 
             let address = transaction.address.unwrap();
 
             // Save the account in deployments
-            DB::save_account(
+            Deployments::save_account(
                 &self.private_key_env,
                 &format!("{:#064x}", &address),
                 &format!("{:#064x}", factory.public_key.scalar()),
