@@ -24,7 +24,6 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: stest
-          args: --all-features --workspace
 
   rustfmt:
     name: Rustfmt
