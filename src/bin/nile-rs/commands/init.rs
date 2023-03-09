@@ -42,7 +42,7 @@ impl CliCommand for Init {
             copy_file(file.0, file.1, file.2)?
         }
 
-        println!("🗄 Creating project directory tree");
+        println!("🗄  Creating project directory tree");
         println!("⛵️ Nile project ready!");
 
         Ok(())

@@ -5,6 +5,8 @@ use nile_test_utils::{expected_stdout, mock_network, snapbox::get_snapbox};
 
 #[test]
 fn test_setup_with_goerli() {
+    let temp = assert_fs::TempDir::new().unwrap();
+
     let assert = get_snapbox()
         .arg("setup")
         .arg("--network")
@@ -13,6 +15,7 @@ fn test_setup_with_goerli() {
         .arg("1")
         .arg("ACCOUNT_1_PK")
         .env("ACCOUNT_1_PK", "1")
+        .current_dir(&temp)
         .assert()
         .success();
 

@@ -7,13 +7,13 @@ use std::env;
 use nile_test_utils::{expected_stdout, mock_network, snapbox::get_snapbox};
 
 #[test]
-fn test_declare() {
+fn test_deploy() {
     let private_key_env = "ACCOUNT_1_PK";
     let network = "localhost";
 
     // Register the account locally
     let temp = assert_fs::TempDir::new().unwrap();
-    temp.copy_from("./tests/fixtures", &["artifacts/contract.json"])
+    temp.copy_from("./tests/fixtures", &["artifacts/ERC20.json"])
         .unwrap();
 
     let cwd = env::current_dir().unwrap();
@@ -36,12 +36,12 @@ fn test_declare() {
             .json_body(json!({
               "code": "TRANSACTION_RECEIVED",
               "transaction_hash": "0x376fc5328badc4eff64d0332044a9b455f264e5014d46af5880fe4df43f9f1e",
-              "class_hash": "0x508fc648f7dc864be1242384cc819f0d23bfeea97b5216923ab769e103c9775"}));
+              "address": "0x07cfadda3ed391f56ba9a556457bb102c0965fef2a254e750a7ce2b85458a7b0"}));
     });
 
     let assert = get_snapbox()
-        .arg("declare")
-        .arg("contract")
+        .arg("deploy")
+        .arg("ERC20")
         .arg("-p")
         .arg(private_key_env)
         .arg("--network")
@@ -53,7 +53,7 @@ fn test_declare() {
         .assert()
         .success();
 
-    assert.stdout_eq(expected_stdout("declare"));
+    assert.stdout_eq(expected_stdout("deploy"));
 }
 
 #[test]
@@ -62,7 +62,7 @@ fn test_estimate_fee() {
 
     // Register the account locally
     let temp = assert_fs::TempDir::new().unwrap();
-    temp.copy_from("./tests/fixtures", &["artifacts/contract.json"])
+    temp.copy_from("./tests/fixtures", &["artifacts/ERC20.json"])
         .unwrap();
 
     // Mock the provider
@@ -94,8 +94,8 @@ fn test_estimate_fee() {
     });
 
     let assert = get_snapbox()
-        .arg("declare")
-        .arg("contract")
+        .arg("deploy")
+        .arg("ERC20")
         .arg("-d")
         .arg("0")
         .arg("--network")

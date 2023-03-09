@@ -1,7 +1,4 @@
-use crate::commands::{
-    Compile, CompileCairoToSierra, CompileSierraToCasm, CounterfactualAddress, Declare, Init, Run,
-    Setup,
-};
+use crate::commands::{Call, CounterfactualAddress, Declare, Deploy, Init, Run, Send, Setup};
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
@@ -26,14 +23,8 @@ pub enum Commands {
     #[clap(about = "Initialize a new Nile project")]
     Init(Init),
 
-    #[clap(about = "Compile Cairo1 contracts")]
-    Compile(Compile),
-
-    #[clap(about = "Compile Cairo1 contracts to Sierra")]
-    CompileCairo(CompileCairoToSierra),
-
-    #[clap(about = "Compile Sierra artifacts to Casm")]
-    CompileSierra(CompileSierraToCasm),
+    #[clap(about = "Query the blockchain with a function call")]
+    RawCall(Call),
 
     #[clap(about = "Get counterfactual address from signer")]
     CounterfactualAddress(CounterfactualAddress),
@@ -41,8 +32,14 @@ pub enum Commands {
     #[clap(about = "Declare a contract through an Account")]
     Declare(Declare),
 
+    #[clap(about = "Deploy a contract through an Account")]
+    Deploy(Deploy),
+
     #[clap(about = "Execute a script from the scripts folder")]
     Run(Run),
+
+    #[clap(about = "Execute a transaction through an Account")]
+    Send(Send),
 
     #[clap(about = "Deploy and setup an Account contract (OZ version)")]
     Setup(Setup),

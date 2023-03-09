@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use starknet_crypto::FieldElement;
 
-use crate::common::str_to_felt;
+use crate::utils::num_str_to_felt;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Network {
@@ -21,7 +21,7 @@ impl Network {
     }
 
     pub fn chain_id_in_felt(&self) -> FieldElement {
-        str_to_felt(&self.chain_id)
+        num_str_to_felt(&self.chain_id).unwrap()
     }
 
     pub fn predeployed_accounts_endpoint(&self) -> String {

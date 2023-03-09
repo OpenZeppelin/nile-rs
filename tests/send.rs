@@ -1,4 +1,3 @@
-use assert_fs::prelude::*;
 use httpmock::prelude::*;
 use nile_rs::core::Deployments;
 use serde_json::json;
@@ -6,19 +5,20 @@ use std::env;
 
 use nile_test_utils::{expected_stdout, mock_network, snapbox::get_snapbox};
 
+const CONTRACT_ADDRESS: &str = "0x07cfadda3ed391f56ba9a556457bb102c0965fef2a254e750a7ce2b85458a7b0";
+
 #[test]
-fn test_declare() {
+fn test_send() {
     let private_key_env = "ACCOUNT_1_PK";
     let network = "localhost";
 
     // Register the account locally
     let temp = assert_fs::TempDir::new().unwrap();
-    temp.copy_from("./tests/fixtures", &["artifacts/contract.json"])
-        .unwrap();
 
     let cwd = env::current_dir().unwrap();
     assert!(env::set_current_dir(&temp).is_ok());
     Deployments::save_account(private_key_env, "0x1", "0x2", network).unwrap();
+    Deployments::save_contract(None, CONTRACT_ADDRESS, network).unwrap();
     assert!(env::set_current_dir(cwd).is_ok());
 
     // Mock the provider
@@ -36,34 +36,41 @@ fn test_declare() {
             .json_body(json!({
               "code": "TRANSACTION_RECEIVED",
               "transaction_hash": "0x376fc5328badc4eff64d0332044a9b455f264e5014d46af5880fe4df43f9f1e",
-              "class_hash": "0x508fc648f7dc864be1242384cc819f0d23bfeea97b5216923ab769e103c9775"}));
+              "address": "0x07cfadda3ed391f56ba9a556457bb102c0965fef2a254e750a7ce2b85458a7b0"}));
     });
 
     let assert = get_snapbox()
-        .arg("declare")
-        .arg("contract")
+        .arg("send")
         .arg("-p")
         .arg(private_key_env)
+        .arg("--address")
+        .arg(CONTRACT_ADDRESS)
         .arg("--network")
         .arg(network)
         .arg("--max-fee")
+        .arg("1")
+        .arg("transfer")
+        .arg("1")
+        .arg("0")
         .arg("1")
         .env("ACCOUNT_1_PK", "1")
         .current_dir(&temp)
         .assert()
         .success();
 
-    assert.stdout_eq(expected_stdout("declare"));
+    assert.stdout_eq(expected_stdout("send"));
 }
 
 #[test]
 fn test_estimate_fee() {
     let network = "localhost";
-
-    // Register the account locally
     let temp = assert_fs::TempDir::new().unwrap();
-    temp.copy_from("./tests/fixtures", &["artifacts/contract.json"])
-        .unwrap();
+
+    // Register the contract locally
+    let cwd = env::current_dir().unwrap();
+    assert!(env::set_current_dir(&temp).is_ok());
+    Deployments::save_contract(None, CONTRACT_ADDRESS, network).unwrap();
+    assert!(env::set_current_dir(cwd).is_ok());
 
     // Mock the provider
     let server = MockServer::start();
@@ -94,13 +101,18 @@ fn test_estimate_fee() {
     });
 
     let assert = get_snapbox()
-        .arg("declare")
-        .arg("contract")
+        .arg("send")
         .arg("-d")
         .arg("0")
+        .arg("--address")
+        .arg(CONTRACT_ADDRESS)
         .arg("--network")
         .arg(network)
-        .arg("--estimate-fee")
+        .arg("transfer")
+        .arg("1")
+        .arg("0")
+        .arg("1")
+        .arg("-e")
         .current_dir(&temp)
         .assert()
         .success();

@@ -6,18 +6,16 @@ use crate::config::Config;
 const TO_REPLACE: &str = "<network>";
 const FILE_NAME_FORMAT: &str = "<network>.accounts.json";
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct AccountInfo {
     pub name: String,
     pub address: String,
     pub public_key: String,
 }
 
-pub struct DB {}
-
-impl DB {
+impl AccountInfo {
     /// Attempt to get the account data from the file system
-    pub fn load_from_signer(private_key_env: &str, network: &str) -> Result<AccountInfo> {
+    pub fn load_from_signer(private_key_env: &str, network: &str) -> Result<Self> {
         let config = Config::get()?;
         let db_file_name = [
             &config.deployments_dir,
@@ -41,14 +39,15 @@ impl DB {
         match result {
             Some(acc) => Ok(acc),
             None => Err(anyhow!(
-                "Account not found! If the account is deployed\
-                already, try registering it in `{db_file_name}`"
+                "Account not found! If the account is deployed \
+                already, try registering it in `{}`",
+                db_file_name.replace("//", "/")
             )),
         }
     }
 
     /// Attempt to save the account data in the file system
-    pub fn save_account(
+    pub fn save(
         private_key_env: &str,
         address: &str,
         public_key: &str,
@@ -94,4 +93,13 @@ impl DB {
 
         Ok(())
     }
+}
+
+#[test]
+fn error_context() {
+    let error = AccountInfo::load_from_signer("invalid_name", "localhost").unwrap_err();
+    assert_eq!(
+        format!("{}", error),
+        "Failed to load the account from: `deployments/localhost.accounts.json`"
+    );
 }

@@ -1,17 +1,19 @@
-mod compile;
+mod call;
 mod counterfactual_address;
 mod declare;
+mod deploy;
 mod init;
 mod run;
+mod send;
 mod setup;
 
-pub use compile::{
-    cairo_to_sierra::CompileCairoToSierra, sierra_to_casm::CompileSierraToCasm, Compile,
-};
+pub use call::Call;
 pub use counterfactual_address::CounterfactualAddress;
 pub use declare::Declare;
+pub use deploy::Deploy;
 pub use init::Init;
 pub use run::Run;
+pub use send::Send;
 pub use setup::Setup;
 
 use anyhow::Result;
