@@ -23,3 +23,12 @@ pub fn get_legacy_class_hash(contract_name: &str) -> Result<FieldElement> {
         .class_hash()
         .with_context(|| "Failed to obtain the class hash")
 }
+
+#[test]
+fn error_context() {
+    let error = get_legacy_contract_class("invalid_name").unwrap_err();
+    assert_eq!(
+        format!("{}", error),
+        format!("Failed to read the artifact from: `artifacts/invalid_name.json`",)
+    );
+}

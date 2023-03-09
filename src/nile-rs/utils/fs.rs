@@ -28,19 +28,24 @@ pub fn get_abi_from_sierra(sierra_file: &str) -> Value {
     sierra_json["abi"].clone()
 }
 
-#[test]
-fn get_all_contracts_output() {
-    let dir = "./tests/fixtures/contracts/";
-    let contracts = get_all_contracts(dir);
+#[cfg(test)]
+mod tests {
+    use super::{get_abi_from_sierra, get_all_contracts};
 
-    assert_eq!(contracts.len(), 2);
-    assert!(contracts[0].ends_with("/hello_starknet.cairo"));
-    assert!(contracts[1].ends_with("/erc20.cairo"));
-}
+    #[test]
+    fn get_all_contracts_output() {
+        let dir = "./tests/fixtures/contracts/";
+        let contracts = get_all_contracts(dir);
 
-#[test]
-fn get_abi_from_sierra_output() {
-    let abi = get_abi_from_sierra("./tests/fixtures/artifacts/hello_starknet.sierra");
+        assert_eq!(contracts.len(), 2);
+        assert!(contracts[0].ends_with("/hello_starknet.cairo"));
+        assert!(contracts[1].ends_with("/erc20.cairo"));
+    }
 
-    assert_eq!(abi[0]["name"], "increase_balance");
+    #[test]
+    fn get_abi_from_sierra_output() {
+        let abi = get_abi_from_sierra("./tests/fixtures/artifacts/hello_starknet.sierra");
+
+        assert_eq!(abi[0]["name"], "increase_balance");
+    }
 }

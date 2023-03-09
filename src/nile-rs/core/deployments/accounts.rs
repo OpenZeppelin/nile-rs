@@ -6,7 +6,7 @@ use crate::config::Config;
 const TO_REPLACE: &str = "<network>";
 const FILE_NAME_FORMAT: &str = "<network>.accounts.json";
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct AccountInfo {
     pub name: String,
     pub address: String,
@@ -39,8 +39,9 @@ impl AccountInfo {
         match result {
             Some(acc) => Ok(acc),
             None => Err(anyhow!(
-                "Account not found! If the account is deployed\
-                already, try registering it in `{db_file_name}`"
+                "Account not found! If the account is deployed \
+                already, try registering it in `{}`",
+                db_file_name.replace("//", "/")
             )),
         }
     }
@@ -92,4 +93,13 @@ impl AccountInfo {
 
         Ok(())
     }
+}
+
+#[test]
+fn error_context() {
+    let error = AccountInfo::load_from_signer("invalid_name", "localhost").unwrap_err();
+    assert_eq!(
+        format!("{}", error),
+        "Failed to load the account from: `deployments/localhost.accounts.json`"
+    );
 }

@@ -1,13 +1,11 @@
 use httpmock::prelude::*;
 use serde_json::json;
-use serial_test::serial;
 
 use nile_test_utils::{expected_stdout, mock_network, snapbox::get_snapbox};
 
 const CONTRACT_ADDRESS: &str = "0x07cfadda3ed391f56ba9a556457bb102c0965fef2a254e750a7ce2b85458a7b0";
 
 #[test]
-#[serial]
 fn test_raw_call() {
     let network = "localhost";
 

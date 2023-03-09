@@ -1,7 +1,6 @@
 use httpmock::prelude::*;
 use nile_rs::core::Deployments;
 use serde_json::json;
-use serial_test::serial;
 use std::env;
 
 use nile_test_utils::{expected_stdout, mock_network, snapbox::get_snapbox};
@@ -9,7 +8,6 @@ use nile_test_utils::{expected_stdout, mock_network, snapbox::get_snapbox};
 const CONTRACT_ADDRESS: &str = "0x07cfadda3ed391f56ba9a556457bb102c0965fef2a254e750a7ce2b85458a7b0";
 
 #[test]
-#[serial]
 fn test_send() {
     let private_key_env = "ACCOUNT_1_PK";
     let network = "localhost";
@@ -64,7 +62,6 @@ fn test_send() {
 }
 
 #[test]
-#[serial]
 fn test_estimate_fee() {
     let network = "localhost";
     let temp = assert_fs::TempDir::new().unwrap();

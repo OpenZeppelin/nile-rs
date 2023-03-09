@@ -66,3 +66,28 @@ pub fn get_network_provider_and_signer(
 
     Ok((network, provider, signer))
 }
+
+#[test]
+fn is_decimal_output() {
+    assert!(!is_decimal("0x123"));
+    assert!(!is_decimal("abc"));
+    assert!(is_decimal("123"));
+    assert!(!is_decimal("123k"));
+}
+
+#[test]
+fn is_hex_output() {
+    assert!(is_hex("0x123"));
+    assert!(is_hex("0xabc"));
+    assert!(!is_hex("123"));
+    assert!(!is_hex("0xk"));
+}
+
+#[test]
+fn normalize_calldata_output() {
+    let calldata: Vec<String> = vec!["123".into(), "TOKEN".into()];
+    let normalized = normalize_calldata(calldata);
+
+    assert_eq!(normalized[0], num_str_to_felt("123").unwrap());
+    assert_eq!(normalized[1], short_str_to_felt("TOKEN").unwrap());
+}

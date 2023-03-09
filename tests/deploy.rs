@@ -2,13 +2,11 @@ use assert_fs::prelude::*;
 use httpmock::prelude::*;
 use nile_rs::core::Deployments;
 use serde_json::json;
-use serial_test::serial;
 use std::env;
 
 use nile_test_utils::{expected_stdout, mock_network, snapbox::get_snapbox};
 
 #[test]
-#[serial]
 fn test_deploy() {
     let private_key_env = "ACCOUNT_1_PK";
     let network = "localhost";
@@ -59,7 +57,6 @@ fn test_deploy() {
 }
 
 #[test]
-#[serial]
 fn test_estimate_fee() {
     let network = "localhost";
 
