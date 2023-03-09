@@ -7,7 +7,7 @@ use crate::utils::num_str_to_felt;
 const TO_REPLACE: &str = "<network>";
 const FILE_NAME_FORMAT: &str = "<network>.contracts.json";
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ContractInfo {
     pub alias: String,
     pub address: String,
@@ -25,9 +25,9 @@ impl ContractInfo {
         match result {
             Some(contract) => Ok(contract),
             None => Err(anyhow!(
-                "Contract not found! If the contract is deployed\
+                "Contract not found! If the contract is deployed \
                 already, try registering it in `{}`",
-                Self::get_db_file_name(network)?
+                Self::get_db_file_name(network)?.replace("//", "/")
             )),
         }
     }
@@ -43,9 +43,9 @@ impl ContractInfo {
         match result {
             Some(contract) => Ok(contract),
             None => Err(anyhow!(
-                "Contract not found! If the contract is deployed\
+                "Contract not found! If the contract is deployed \
                 already, try registering it in `{}`",
-                Self::get_db_file_name(network)?
+                Self::get_db_file_name(network)?.replace("//", "/")
             )),
         }
     }
@@ -117,4 +117,13 @@ impl ContractInfo {
 
         Ok(())
     }
+}
+
+#[test]
+fn error_context() {
+    let error = ContractInfo::load_from_address("0x1", "test").unwrap_err();
+    assert_eq!(
+        format!("{}", error),
+        "Failed to load the contract from: `deployments/test.contracts.json`"
+    );
 }
