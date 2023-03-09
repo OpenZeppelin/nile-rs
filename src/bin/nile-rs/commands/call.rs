@@ -48,7 +48,7 @@ impl CliCommand for Call {
             .await
             .with_context(|| "Failed to query the blockchain")?;
 
-        dbg!(call_result);
+        println!("{:#?}", call_result);
         Ok(())
     }
 }

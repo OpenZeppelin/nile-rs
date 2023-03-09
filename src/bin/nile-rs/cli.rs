@@ -1,7 +1,4 @@
-use crate::commands::{
-    Call, CounterfactualAddress, Declare,
-    Deploy, Init, Run, Send, Setup,
-};
+use crate::commands::{Call, CounterfactualAddress, Declare, Deploy, Init, Run, Send, Setup};
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
