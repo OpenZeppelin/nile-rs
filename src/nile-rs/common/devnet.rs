@@ -41,7 +41,7 @@ pub async fn get_predeployed_accounts(network: &str) -> Result<Vec<OZAccount>> {
 #[cfg(test)]
 mod test {
     use super::get_predeployed_accounts;
-    use nile_test_utils::mock_network;
+    use nile_test_utils::{clean_env, mock_network};
 
     use httpmock::prelude::*;
     use serde_json::json;
@@ -74,5 +74,8 @@ mod test {
 
         let accounts = get_predeployed_accounts(network).await.unwrap();
         assert_eq!(accounts.len(), 2);
+
+        // Clean env after finishing using the mocked network
+        clean_env()
     }
 }

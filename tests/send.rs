@@ -3,7 +3,7 @@ use nile_rs::core::Deployments;
 use serde_json::json;
 use std::env;
 
-use nile_test_utils::{expected_stdout, mock_network, snapbox::get_snapbox};
+use nile_test_utils::{clean_env, expected_stdout, mock_network, snapbox::get_snapbox};
 
 const CONTRACT_ADDRESS: &str = "0x07cfadda3ed391f56ba9a556457bb102c0965fef2a254e750a7ce2b85458a7b0";
 
@@ -59,6 +59,9 @@ fn test_send() {
         .success();
 
     assert.stdout_eq(expected_stdout("send"));
+
+    // Clean env after finishing using the mocked network
+    clean_env()
 }
 
 #[test]
@@ -118,4 +121,7 @@ fn test_estimate_fee() {
         .success();
 
     assert.stdout_eq(expected_stdout("estimate_fee"));
+
+    // Clean env after finishing using the mocked network
+    clean_env()
 }

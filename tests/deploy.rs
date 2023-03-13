@@ -4,7 +4,7 @@ use nile_rs::core::Deployments;
 use serde_json::json;
 use std::env;
 
-use nile_test_utils::{expected_stdout, mock_network, snapbox::get_snapbox};
+use nile_test_utils::{clean_env, expected_stdout, mock_network, snapbox::get_snapbox};
 
 #[test]
 fn test_deploy() {
@@ -54,6 +54,9 @@ fn test_deploy() {
         .success();
 
     assert.stdout_eq(expected_stdout("deploy"));
+
+    // Clean env after finishing using the mocked network
+    clean_env()
 }
 
 #[test]
@@ -106,4 +109,7 @@ fn test_estimate_fee() {
         .success();
 
     assert.stdout_eq(expected_stdout("estimate_fee"));
+
+    // Clean env after finishing using the mocked network
+    clean_env()
 }
