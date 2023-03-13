@@ -1,8 +1,8 @@
 use anyhow::{Context, Ok, Result};
 use async_trait::async_trait;
 use clap::Parser;
+use nile_rs::common::devnet::get_predeployed_accounts;
 use nile_rs::core::accounts::OZAccount;
-use nile_rs::utils::devnet::get_predeployed_accounts;
 
 use super::CliCommand;
 

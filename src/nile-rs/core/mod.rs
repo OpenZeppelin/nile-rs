@@ -1,3 +1,3 @@
 pub mod accounts;
-mod deployments;
+pub mod deployments;
 pub use deployments::Deployments;

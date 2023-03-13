@@ -3,9 +3,9 @@ use async_trait::async_trait;
 use clap::Parser;
 
 use super::CliCommand;
+use nile_rs::common::devnet::get_predeployed_accounts;
 use nile_rs::core::accounts::OZAccount;
 use nile_rs::core::Deployments;
-use nile_rs::utils::devnet::get_predeployed_accounts;
 
 #[derive(Parser, Debug)]
 #[command(group(

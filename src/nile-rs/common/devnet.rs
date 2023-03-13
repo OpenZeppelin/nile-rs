@@ -17,7 +17,7 @@ pub async fn get_predeployed_accounts(network: &str) -> Result<Vec<OZAccount>> {
     let network_str = network;
     let network = Config::get_network(network)?;
 
-    // Get account from http request
+    // Get accounts from http request
     let endpoint = network.predeployed_accounts_endpoint();
     let res = Client::new()
         .get(Url::parse(&endpoint)?)
