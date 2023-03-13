@@ -1,9 +1,9 @@
 mod accounts;
 mod contracts;
 
-use accounts::AccountInfo;
+pub use accounts::AccountInfo;
 use anyhow::Result;
-use contracts::ContractInfo;
+pub use contracts::ContractInfo;
 
 pub struct Deployments {}
 

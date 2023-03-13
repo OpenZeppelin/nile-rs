@@ -6,6 +6,7 @@ mod init;
 mod run;
 mod send;
 mod setup;
+mod status;
 
 pub use call::Call;
 pub use counterfactual_address::CounterfactualAddress;
@@ -15,6 +16,7 @@ pub use init::Init;
 pub use run::Run;
 pub use send::Send;
 pub use setup::Setup;
+pub use status::Status;
 
 use anyhow::Result;
 use async_trait::async_trait;

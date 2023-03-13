@@ -5,7 +5,8 @@ use figment::{
 use serde::{Deserialize, Serialize};
 
 mod default;
-pub mod types;
+
+use crate::common::types::Network;
 
 #[derive(Deserialize, Serialize)]
 pub struct Config {
@@ -15,8 +16,10 @@ pub struct Config {
     pub artifacts_dir: String,
     /// Directory where deployments are stored
     pub deployments_dir: String,
+    /// Frequency for querying the status of a transaction
+    pub track_interval: u32,
     /// Custom networks
-    pub networks: Vec<types::Network>,
+    pub networks: Vec<Network>,
 }
 
 impl Config {
@@ -24,7 +27,7 @@ impl Config {
         Config::figment().extract::<Self>()
     }
 
-    pub fn get_network(name: &str) -> Result<types::Network, Error> {
+    pub fn get_network(name: &str) -> Result<Network, Error> {
         let config = Self::get()?;
         let result = config
             .networks
@@ -47,27 +50,27 @@ impl Config {
         }
     }
 
-    fn base_networks() -> [types::Network; 4] {
+    fn base_networks() -> [Network; 4] {
         [
-            types::Network {
+            Network {
                 name: "localhost".into(),
                 gateway: "http://127.0.0.1:5050/gateway".into(),
                 feeder_gateway: None,
                 chain_id: "1536727068981429685321".into(),
             },
-            types::Network {
+            Network {
                 name: "mainnet".into(),
                 gateway: "https://alpha-mainnet.starknet.io/gateway".into(),
                 feeder_gateway: None,
                 chain_id: "23448594291968334".into(),
             },
-            types::Network {
+            Network {
                 name: "goerli".into(),
                 gateway: "https://alpha4.starknet.io/gateway".into(),
                 feeder_gateway: None,
                 chain_id: "1536727068981429685321".into(),
             },
-            types::Network {
+            Network {
                 name: "goerli2".into(),
                 gateway: "https://alpha4-2.starknet.io/gateway".into(),
                 feeder_gateway: None,

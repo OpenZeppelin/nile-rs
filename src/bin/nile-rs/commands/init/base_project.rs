@@ -36,10 +36,9 @@ use std::fs;
 use std::path::Path;
 
 fn main() {
-    let script = env::var("NILE_RS_TARGET_SCRIPT")
-        .unwrap()
-        .into_string()
-        .unwrap();
+    let script = env::var("NILE_RS_TARGET_SCRIPT_NAME").unwrap();
+    let network = env::var("NILE_RS_TARGET_SCRIPT_NETWORK").unwrap();
+
     let dest_path = Path::new("./src/main.rs");
     let contents = fs::read_to_string(format!("../{}.rs", script)).expect("Script not found.");
     let with_disclosure = [
@@ -51,11 +50,17 @@ fn main() {
     fs::write(
         dest_path,
         with_disclosure
-            + r#"
-fn main() {
-    run();
+            + &r#"
+extern crate nile_rs;
+use nile_rs::nre::NileRuntimeEnvironment;
+
+#[tokio::main]
+async fn main() {
+    let nre = NileRuntimeEnvironment::new("<network>").unwrap();
+    run(nre).await;
 }
-"#,
+"#
+            .replace("<network>", &network),
     )
     .unwrap();
 }
@@ -66,6 +71,11 @@ fn main() {}
 "#;
 
 pub const SCRIPTS_CARGO_TOML: &str = r#"[package]
+edition = "2021"
 name = "nile-rs-scripts-module"
 version = "0.1.0"
+
+[dependencies]
+tokio = { version = "1"}
+nile-rs = { path = "../../../" }
 "#;

@@ -1,4 +1,6 @@
-use crate::commands::{Call, CounterfactualAddress, Declare, Deploy, Init, Run, Send, Setup};
+use crate::commands::{
+    Call, CounterfactualAddress, Declare, Deploy, Init, Run, Send, Setup, Status,
+};
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
@@ -43,6 +45,9 @@ pub enum Commands {
 
     #[clap(about = "Deploy and setup an Account contract (OZ version)")]
     Setup(Setup),
+
+    #[clap(about = "Query the status of a transaction")]
+    Status(Status),
 }
 
 #[test]

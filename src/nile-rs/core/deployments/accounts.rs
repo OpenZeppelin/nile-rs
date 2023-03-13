@@ -16,13 +16,7 @@ pub struct AccountInfo {
 impl AccountInfo {
     /// Attempt to get the account data from the file system
     pub fn load_from_signer(private_key_env: &str, network: &str) -> Result<Self> {
-        let config = Config::get()?;
-        let db_file_name = [
-            &config.deployments_dir,
-            "/",
-            &FILE_NAME_FORMAT.replace(TO_REPLACE, network),
-        ]
-        .concat();
+        let db_file_name = Self::get_db_file_name(network)?;
 
         let context = || {
             format!(
@@ -46,6 +40,34 @@ impl AccountInfo {
         }
     }
 
+    fn get_db_file_name(network: &str) -> Result<String> {
+        let config = Config::get()?;
+        let db_file_name = [
+            &config.deployments_dir,
+            "/",
+            &FILE_NAME_FORMAT.replace(TO_REPLACE, network),
+        ]
+        .concat();
+        Ok(db_file_name)
+    }
+
+    /// Attempt to get all the registered accounts
+    pub fn load_all(network: &str) -> Result<Vec<Self>> {
+        let db_file_name = Self::get_db_file_name(network)?;
+
+        let context = || {
+            format!(
+                "Failed to load the accounts from: `{}`",
+                db_file_name.replace("//", "/")
+            )
+        };
+        let accounts: Vec<AccountInfo> =
+            serde_json::from_reader(std::fs::File::open(&db_file_name).with_context(context)?)
+                .with_context(context)?;
+
+        Ok(accounts)
+    }
+
     /// Attempt to save the account data in the file system
     pub fn save(
         private_key_env: &str,
@@ -54,15 +76,10 @@ impl AccountInfo {
         network: &str,
     ) -> Result<()> {
         let config = Config::get()?;
-        let db_file_name = [
-            &config.deployments_dir,
-            "/",
-            &FILE_NAME_FORMAT.replace(TO_REPLACE, network),
-        ]
-        .concat();
+        let db_file_name = Self::get_db_file_name(network)?;
 
         // Ensure the directories exists
-        std::fs::create_dir_all(&config.deployments_dir)?;
+        std::fs::create_dir_all(config.deployments_dir)?;
 
         let new_account = AccountInfo {
             name: private_key_env.into(),

@@ -1,7 +1,7 @@
 use httpmock::prelude::*;
 use serde_json::json;
 
-use nile_test_utils::{expected_stdout, mock_network, snapbox::get_snapbox};
+use nile_test_utils::{clean_env, expected_stdout, mock_network, snapbox::get_snapbox};
 
 #[test]
 fn test_setup_with_goerli() {
@@ -59,4 +59,7 @@ fn test_estimate_fee() {
         .success();
 
     assert.stdout_eq(expected_stdout("estimate_fee"));
+
+    // Clean env after finishing using the mocked network
+    clean_env()
 }
