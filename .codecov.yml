@@ -1,3 +1,12 @@
 comment: off
 github_checks:
   annotations: false
+coverage:
+  status:
+    patch:
+      default:
+        target: 90%
+        only_pulls: true
+    project:
+      default:
+        threshold: 1%
