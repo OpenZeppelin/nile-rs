@@ -58,12 +58,7 @@ mod test {
     use httpmock::prelude::*;
     use serde_json::json;
 
-    #[tokio::test]
-    async fn not_received() {
-        let server = MockServer::start();
-        let network = "local_test";
-        mock_network(network, &server.url("/gateway"));
-
+    fn mock_get_status_endpoint(server: MockServer) {
         server.mock(|when, then| {
             when.path("/feeder_gateway/get_transaction_status");
             then.status(200)
@@ -71,6 +66,14 @@ mod test {
                 .json_body(json!(
                 { "tx_status": "NOT_RECEIVED" }));
         });
+    }
+
+    #[tokio::test]
+    async fn not_received() {
+        let server = MockServer::start();
+        let network = "local_test";
+        mock_network(network, &server.url("/gateway"));
+        mock_get_status_endpoint(server);
 
         let status = get_tx_status("0x1234", network, false).await.unwrap();
         assert_eq!(
@@ -100,6 +103,31 @@ mod test {
         assert_eq!(
             status.status,
             starknet_core::types::TransactionStatus::Pending
+        );
+
+        // Clean env after finishing using the mocked network
+        clean_env()
+    }
+
+    #[tokio::test]
+    async fn rejected() {
+        let server = MockServer::start();
+        let network = "local_test";
+        mock_network(network, &server.url("/gateway"));
+
+        server.mock(|when, then| {
+            when.path("/feeder_gateway/get_transaction_status");
+            then.status(200)
+                .header("content-type", "application/json")
+                .json_body(json!(
+                { "tx_status": "REJECTED",
+                  "tx_failure_reason" : {"code": "1", "error_message": "reason"}}));
+        });
+
+        let status = get_tx_status("0x1234", network, false).await.unwrap();
+        assert_eq!(
+            status.status,
+            starknet_core::types::TransactionStatus::Rejected
         );
 
         // Clean env after finishing using the mocked network

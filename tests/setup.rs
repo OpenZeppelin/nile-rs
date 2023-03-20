@@ -1,5 +1,6 @@
+mod common;
+
 use httpmock::prelude::*;
-use serde_json::json;
 use std::env;
 
 use nile_rs::common::get_accounts;
@@ -16,6 +17,7 @@ fn test_setup_with_goerli() {
         .arg(network)
         .arg("--max-fee")
         .arg("1")
+        .arg("--track")
         .arg("ACCOUNT_1_PK")
         .env("ACCOUNT_1_PK", "1")
         .current_dir(&temp)
@@ -43,21 +45,9 @@ fn test_estimate_fee() {
     let server = MockServer::start();
     mock_network(network, &server.url("/gateway"));
 
-    server.mock(|when, then| {
-        when.path("/feeder_gateway/get_nonce");
-        then.status(200).body("\"0x0\"");
-    });
-    server.mock(|when, then| {
-        when.path("/feeder_gateway/estimate_fee");
-        then.status(200)
-            .header("content-type", "application/json")
-            .json_body(json!({
-              "gas_price": 1000000,
-              "gas_usage": 1349,
-              "overall_fee": 1349000000,
-              "unit": "wei"
-            }));
-    });
+    // Mock endpoints
+    common::mock_get_nonce_endpoint(&server);
+    common::mock_estimate_fee_endpoint(&server);
 
     let assert = get_snapbox()
         .arg("setup")

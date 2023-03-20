@@ -1,7 +1,8 @@
+mod common;
+
 use assert_fs::prelude::*;
 use httpmock::prelude::*;
 use nile_rs::core::Deployments;
-use serde_json::json;
 use std::env;
 
 use nile_test_utils::{clean_env, expected_stdout, mock_network, snapbox::get_snapbox};
@@ -25,19 +26,10 @@ fn test_declare() {
     let server = MockServer::start();
     mock_network(network, &server.url("/gateway"));
 
-    server.mock(|when, then| {
-        when.path("/feeder_gateway/get_nonce");
-        then.status(200).body("\"0x0\"");
-    });
-    server.mock(|when, then| {
-        when.path("/gateway/add_transaction");
-        then.status(200)
-            .header("content-type", "application/json")
-            .json_body(json!({
-              "code": "TRANSACTION_RECEIVED",
-              "transaction_hash": "0x376fc5328badc4eff64d0332044a9b455f264e5014d46af5880fe4df43f9f1e",
-              "class_hash": "0x508fc648f7dc864be1242384cc819f0d23bfeea97b5216923ab769e103c9775"}));
-    });
+    // Mock endpoints
+    common::mock_get_status_endpoint(&server);
+    common::mock_get_nonce_endpoint(&server);
+    common::mock_add_transaction_endpoint(&server);
 
     let assert = get_snapbox()
         .arg("declare")
@@ -48,6 +40,7 @@ fn test_declare() {
         .arg(network)
         .arg("--max-fee")
         .arg("1")
+        .arg("--track")
         .env("ACCOUNT_1_PK", "1")
         .current_dir(&temp)
         .assert()
@@ -72,29 +65,10 @@ fn test_estimate_fee() {
     let server = MockServer::start();
     mock_network(network, &server.url("/gateway"));
 
-    server.mock(|when, then| {
-        when.path("/predeployed_accounts");
-        then.status(200)
-            .header("content-type", "application/json")
-            .json_body(json!([
-            { "private_key": "0x1", "address": "0x2" },
-            { "private_key": "0x3", "address": "0x4" }]));
-    });
-    server.mock(|when, then| {
-        when.path("/feeder_gateway/get_nonce");
-        then.status(200).body("\"0x0\"");
-    });
-    server.mock(|when, then| {
-        when.path("/feeder_gateway/estimate_fee");
-        then.status(200)
-            .header("content-type", "application/json")
-            .json_body(json!({
-              "gas_price": 1000000,
-              "gas_usage": 1349,
-              "overall_fee": 1349000000,
-              "unit": "wei"
-            }));
-    });
+    // Mock endpoints
+    common::mock_get_nonce_endpoint(&server);
+    common::mock_predeployed_accounts_endpoint(&server);
+    common::mock_estimate_fee_endpoint(&server);
 
     let assert = get_snapbox()
         .arg("declare")
