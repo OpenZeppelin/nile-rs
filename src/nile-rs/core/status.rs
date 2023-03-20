@@ -58,13 +58,12 @@ mod test {
     use httpmock::prelude::*;
     use serde_json::json;
 
-    fn mock_get_status_endpoint(server: MockServer) {
+    fn mock_get_status_endpoint(server: MockServer, status: &str) {
         server.mock(|when, then| {
             when.path("/feeder_gateway/get_transaction_status");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!(
-                { "tx_status": "NOT_RECEIVED" }));
+                .json_body(json!({ "tx_status": status }));
         });
     }
 
@@ -73,7 +72,7 @@ mod test {
         let server = MockServer::start();
         let network = "local_test";
         mock_network(network, &server.url("/gateway"));
-        mock_get_status_endpoint(server);
+        mock_get_status_endpoint(server, "NOT_RECEIVED");
 
         let status = get_tx_status("0x1234", network, false).await.unwrap();
         assert_eq!(
@@ -90,14 +89,7 @@ mod test {
         let server = MockServer::start();
         let network = "local_test";
         mock_network(network, &server.url("/gateway"));
-
-        server.mock(|when, then| {
-            when.path("/feeder_gateway/get_transaction_status");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!(
-                { "tx_status": "PENDING" }));
-        });
+        mock_get_status_endpoint(server, "PENDING");
 
         let status = get_tx_status("0x1234", network, false).await.unwrap();
         assert_eq!(

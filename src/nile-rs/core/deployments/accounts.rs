@@ -6,7 +6,7 @@ use crate::config::Config;
 const TO_REPLACE: &str = "<network>";
 const FILE_NAME_FORMAT: &str = "<network>.accounts.json";
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct AccountInfo {
     pub name: String,
     pub address: String,
@@ -100,7 +100,9 @@ impl AccountInfo {
             )?;
         };
 
-        accounts.push(new_account);
+        if !accounts.contains(&new_account) {
+            accounts.push(new_account);
+        }
 
         // Save the JSON structure into the file.
         std::fs::write(
