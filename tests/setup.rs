@@ -1,9 +1,9 @@
-use std::env;
 use httpmock::prelude::*;
 use serde_json::json;
+use std::env;
 
-use nile_test_utils::{clean_env, expected_stdout, mock_network, snapbox::get_snapbox};
 use nile_rs::common::get_accounts;
+use nile_test_utils::{clean_env, expected_stdout, mock_network, snapbox::get_snapbox};
 
 #[test]
 fn test_setup_with_goerli() {

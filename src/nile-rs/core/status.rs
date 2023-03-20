@@ -50,7 +50,6 @@ pub async fn get_tx_status(
     }
 }
 
-
 #[cfg(test)]
 mod test {
     use super::get_tx_status;
@@ -74,7 +73,10 @@ mod test {
         });
 
         let status = get_tx_status("0x1234", network, false).await.unwrap();
-        assert_eq!(status.status, starknet_core::types::TransactionStatus::NotReceived);
+        assert_eq!(
+            status.status,
+            starknet_core::types::TransactionStatus::NotReceived
+        );
 
         // Clean env after finishing using the mocked network
         clean_env()
@@ -95,7 +97,10 @@ mod test {
         });
 
         let status = get_tx_status("0x1234", network, false).await.unwrap();
-        assert_eq!(status.status, starknet_core::types::TransactionStatus::Pending);
+        assert_eq!(
+            status.status,
+            starknet_core::types::TransactionStatus::Pending
+        );
 
         // Clean env after finishing using the mocked network
         clean_env()

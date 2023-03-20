@@ -2,7 +2,6 @@ use nile_test_utils::{expected_stdout, snapbox::get_snapbox};
 
 #[test]
 fn test_status_goerli() {
-
     let assert = get_snapbox()
         .arg("status")
         .arg("--network")
