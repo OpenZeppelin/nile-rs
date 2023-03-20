@@ -5,8 +5,8 @@ use clap::Parser;
 use super::CliCommand;
 use nile_rs::common::devnet::get_predeployed_accounts;
 use nile_rs::core::accounts::OZAccount;
-use nile_rs::core::Deployments;
 use nile_rs::core::status::get_tx_status;
+use nile_rs::core::Deployments;
 
 #[derive(Parser, Debug)]
 #[command(group(

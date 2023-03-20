@@ -4,8 +4,8 @@ use clap::Parser;
 
 use super::CliCommand;
 use nile_rs::core::accounts::OZAccountFactory;
-use nile_rs::core::Deployments;
 use nile_rs::core::status::get_tx_status;
+use nile_rs::core::Deployments;
 
 #[derive(Parser, Debug)]
 pub struct Setup {
