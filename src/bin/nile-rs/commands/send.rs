@@ -1,11 +1,12 @@
 use anyhow::{Context, Ok, Result};
 use async_trait::async_trait;
 use clap::Parser;
-use nile_rs::common::devnet::get_predeployed_accounts;
-use nile_rs::core::accounts::OZAccount;
 
 use super::CliCommand;
+use nile_rs::common::devnet::get_predeployed_accounts;
+use nile_rs::core::accounts::OZAccount;
 use nile_rs::core::Deployments;
+use nile_rs::core::status::get_tx_status;
 
 #[derive(Parser, Debug)]
 #[command(group(
@@ -62,6 +63,14 @@ pub struct Send {
     )]
     pub estimate_fee: bool,
 
+    #[clap(
+        short,
+        long,
+        help = "Block until the transaction gets either ACCEPTED or REJECTED",
+        default_value_t = false
+    )]
+    pub track: bool,
+
     #[clap(from_global)]
     network: String,
 }
@@ -104,9 +113,15 @@ impl Send {
                 .await
                 .with_context(|| "Failed attempt to send the transaction")?;
 
+            let tx_hash = format!("{:#064x}", transaction.transaction_hash);
+
             println!("⏳ Transaction successfully sent!");
             println!();
-            println!("Transaction hash: {:#064x}", transaction.transaction_hash);
+            println!("Transaction hash: {}", &tx_hash);
+
+            if self.track {
+                get_tx_status(&tx_hash, &self.network, self.track).await?;
+            }
         }
         Ok(())
     }

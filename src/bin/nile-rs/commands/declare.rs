@@ -3,6 +3,7 @@ use async_trait::async_trait;
 use clap::Parser;
 use nile_rs::common::devnet::get_predeployed_accounts;
 use nile_rs::core::accounts::OZAccount;
+use nile_rs::core::status::get_tx_status;
 
 use super::CliCommand;
 
@@ -43,6 +44,14 @@ pub struct Declare {
     )]
     pub estimate_fee: bool,
 
+    #[clap(
+        short,
+        long,
+        help = "Block until the transaction gets either ACCEPTED or REJECTED",
+        default_value_t = false
+    )]
+    pub track: bool,
+
     #[clap(from_global)]
     network: String,
 }
@@ -68,11 +77,16 @@ impl Declare {
                 .with_context(|| "Failed attempt to send the declare transaction")?;
 
             let class_hash = transaction.class_hash.unwrap();
+            let tx_hash = format!("{:#064x}", transaction.transaction_hash);
 
             println!("⏳ Declaration successfully sent!");
             println!();
-            println!("Transaction hash: {:#064x}", transaction.transaction_hash);
+            println!("Transaction hash: {}", &tx_hash);
             println!("Class hash: {:#064x}", class_hash);
+
+            if self.track {
+                get_tx_status(&tx_hash, &self.network, self.track).await?;
+            }
         }
         Ok(())
     }

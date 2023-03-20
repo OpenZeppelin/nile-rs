@@ -35,11 +35,10 @@ mod tests {
     #[test]
     fn get_all_contracts_output() {
         let dir = "./tests/fixtures/contracts/";
-        let contracts = get_all_contracts(dir);
+        let mut contracts = get_all_contracts(dir);
+        contracts.sort();
 
         assert_eq!(contracts.len(), 2);
-        println!("{}", contracts[0]);
-        println!("{}", contracts[1]);
         assert!(contracts[0].ends_with("/hello_starknet.cairo"));
         assert!(contracts[1].ends_with("/erc20.cairo"));
     }
