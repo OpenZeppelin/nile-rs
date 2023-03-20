@@ -1,16 +1,19 @@
+use std::env;
 use httpmock::prelude::*;
 use serde_json::json;
 
 use nile_test_utils::{clean_env, expected_stdout, mock_network, snapbox::get_snapbox};
+use nile_rs::common::get_accounts;
 
 #[test]
 fn test_setup_with_goerli() {
+    let network = "goerli";
     let temp = assert_fs::TempDir::new().unwrap();
 
     let assert = get_snapbox()
         .arg("setup")
         .arg("--network")
-        .arg("goerli")
+        .arg(network)
         .arg("--max-fee")
         .arg("1")
         .arg("ACCOUNT_1_PK")
@@ -20,6 +23,15 @@ fn test_setup_with_goerli() {
         .success();
 
     assert.success();
+
+    let cwd = env::current_dir().unwrap();
+    assert!(env::set_current_dir(&temp).is_ok());
+    env::set_var("ACCOUNT_1_PK", "1");
+    let accounts = get_accounts(network).unwrap();
+    env::remove_var("ACCOUNT_1_PK");
+    assert!(env::set_current_dir(cwd).is_ok());
+
+    assert_eq!(accounts.len(), 1);
 }
 
 #[test]

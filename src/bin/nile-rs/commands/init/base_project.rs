@@ -1,5 +1,5 @@
 pub const CARGO_TOML: &str = r#"[workspace]
-members = ["scripts/module"]
+members = ["scripts/.module"]
 "#;
 
 pub const NILE_TOML: &str = r#"[nile]
