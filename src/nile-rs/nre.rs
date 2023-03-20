@@ -1,7 +1,7 @@
 use crate::{
-    common::{devnet::get_predeployed_accounts, get_accounts, types::Network},
+    common::{devnet::get_predeployed_accounts, get_accounts},
     config::Config,
-    core::accounts::OZAccount,
+    core::{accounts::OZAccount, types::Network},
 };
 use anyhow::{Ok, Result};
 

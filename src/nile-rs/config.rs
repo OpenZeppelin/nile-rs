@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 mod default;
 
-use crate::common::types::Network;
+use crate::core::types::Network;
 
 #[derive(Deserialize, Serialize)]
 pub struct Config {
