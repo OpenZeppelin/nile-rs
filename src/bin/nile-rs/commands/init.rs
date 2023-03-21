@@ -18,13 +18,13 @@ const BASE_PROJECT_STRUCTURE: [(&str, &str, &str); 7] = [
         "hello_starknet.cairo",
         base_project::HELLO_STARKNET_CAIRO,
     ),
-    ("./scripts/module/", "build.rs", base_project::BUILD_RS),
+    ("./scripts/.module/", "build.rs", base_project::BUILD_RS),
     (
-        "./scripts/module/",
+        "./scripts/.module/",
         "Cargo.toml",
         base_project::SCRIPTS_CARGO_TOML,
     ),
-    ("./scripts/module/src/", "main.rs", base_project::MAIN_RS),
+    ("./scripts/.module/src/", "main.rs", base_project::MAIN_RS),
 ];
 
 #[async_trait]

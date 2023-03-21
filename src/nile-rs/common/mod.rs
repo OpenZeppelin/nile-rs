@@ -1,41 +1,58 @@
 pub mod artifacts;
 mod constants;
+pub mod devnet;
 pub mod legacy;
 pub use constants::*;
 
-use anyhow::{Ok, Result};
+use anyhow::{Context, Ok, Result};
 use starknet_crypto::FieldElement;
 use starknet_providers::SequencerGatewayProvider;
 use starknet_signers::{LocalWallet, SigningKey};
 use url::Url;
 
-use crate::config::{types::Network, Config};
-use crate::utils::{num_str_to_felt, short_str_to_felt};
+use crate::config::Config;
+use crate::core::accounts::OZAccount;
+use crate::core::deployments::AccountInfo;
+use crate::core::types::Network;
+use crate::utils::{is_number, num_str_to_felt, short_str_to_felt};
 
-pub fn is_number(s: &str) -> bool {
-    is_hex(s) || is_decimal(s)
+pub fn get_accounts(network: &str) -> Result<Vec<OZAccount>> {
+    let accounts: Vec<AccountInfo> = AccountInfo::load_all(network)?;
+
+    let oz_accounts: Vec<OZAccount> = accounts
+        .iter()
+        .map(|acc_info| {
+            let private_key = std::env::var(&acc_info.name)
+                .with_context(|| {
+                    format!("Failed to read the private key from `{}`", &acc_info.name)
+                })
+                .unwrap();
+            OZAccount::new_with_private_key(&private_key, &acc_info.address, network).unwrap()
+        })
+        .collect();
+
+    Ok(oz_accounts)
 }
 
-pub fn is_decimal(s: &str) -> bool {
-    for c in s.chars() {
-        if !c.is_ascii_digit() {
-            return false;
-        }
-    }
-    true
+pub fn get_network_provider_and_signer(
+    private_key: &str,
+    network: &str,
+) -> Result<(Network, SequencerGatewayProvider, LocalWallet)> {
+    let (network, provider) = get_network_and_provider(network)?;
+    let signer = LocalWallet::from(SigningKey::from_secret_scalar(num_str_to_felt(
+        private_key,
+    )?));
+
+    Ok((network, provider, signer))
 }
 
-pub fn is_hex(s: &str) -> bool {
-    if let Some(stripped) = s.strip_prefix("0x") {
-        for c in stripped.chars() {
-            if !c.is_ascii_hexdigit() {
-                return false;
-            }
-        }
-        true
-    } else {
-        false
-    }
+pub fn get_network_and_provider(network: &str) -> Result<(Network, SequencerGatewayProvider)> {
+    let network = Config::get_network(network)?;
+    let provider = SequencerGatewayProvider::new(
+        Url::parse(&network.gateway)?,
+        Url::parse(&network.normalized_feeder_gateway())?,
+    );
+    Ok((network, provider))
 }
 
 pub fn normalize_calldata(calldata: Vec<String>) -> Vec<FieldElement> {
@@ -49,38 +66,6 @@ pub fn normalize_calldata(calldata: Vec<String>) -> Vec<FieldElement> {
         }
     }
     vector
-}
-
-pub fn get_network_provider_and_signer(
-    private_key: &str,
-    network: &str,
-) -> Result<(Network, SequencerGatewayProvider, LocalWallet)> {
-    let network = Config::get_network(network)?;
-    let provider = SequencerGatewayProvider::new(
-        Url::parse(&network.gateway)?,
-        Url::parse(&network.normalized_feeder_gateway())?,
-    );
-    let signer = LocalWallet::from(SigningKey::from_secret_scalar(num_str_to_felt(
-        private_key,
-    )?));
-
-    Ok((network, provider, signer))
-}
-
-#[test]
-fn is_decimal_output() {
-    assert!(!is_decimal("0x123"));
-    assert!(!is_decimal("abc"));
-    assert!(is_decimal("123"));
-    assert!(!is_decimal("123k"));
-}
-
-#[test]
-fn is_hex_output() {
-    assert!(is_hex("0x123"));
-    assert!(is_hex("0xabc"));
-    assert!(!is_hex("123"));
-    assert!(!is_hex("0xk"));
 }
 
 #[test]

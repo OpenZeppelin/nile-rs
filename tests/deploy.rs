@@ -1,10 +1,11 @@
+mod common;
+
 use assert_fs::prelude::*;
 use httpmock::prelude::*;
 use nile_rs::core::Deployments;
-use serde_json::json;
 use std::env;
 
-use nile_test_utils::{expected_stdout, mock_network, snapbox::get_snapbox};
+use nile_test_utils::{clean_env, expected_stdout, mock_network, snapbox::get_snapbox};
 
 #[test]
 fn test_deploy() {
@@ -25,19 +26,10 @@ fn test_deploy() {
     let server = MockServer::start();
     mock_network(network, &server.url("/gateway"));
 
-    server.mock(|when, then| {
-        when.path("/feeder_gateway/get_nonce");
-        then.status(200).body("\"0x0\"");
-    });
-    server.mock(|when, then| {
-        when.path("/gateway/add_transaction");
-        then.status(200)
-            .header("content-type", "application/json")
-            .json_body(json!({
-              "code": "TRANSACTION_RECEIVED",
-              "transaction_hash": "0x376fc5328badc4eff64d0332044a9b455f264e5014d46af5880fe4df43f9f1e",
-              "address": "0x07cfadda3ed391f56ba9a556457bb102c0965fef2a254e750a7ce2b85458a7b0"}));
-    });
+    // Mock endpoints
+    common::mock_get_status_endpoint(&server);
+    common::mock_get_nonce_endpoint(&server);
+    common::mock_add_transaction_endpoint(&server);
 
     let assert = get_snapbox()
         .arg("deploy")
@@ -48,12 +40,16 @@ fn test_deploy() {
         .arg(network)
         .arg("--max-fee")
         .arg("1")
+        .arg("--track")
         .env("ACCOUNT_1_PK", "1")
         .current_dir(&temp)
         .assert()
         .success();
 
     assert.stdout_eq(expected_stdout("deploy"));
+
+    // Clean env after finishing using the mocked network
+    clean_env()
 }
 
 #[test]
@@ -69,29 +65,10 @@ fn test_estimate_fee() {
     let server = MockServer::start();
     mock_network(network, &server.url("/gateway"));
 
-    server.mock(|when, then| {
-        when.path("/predeployed_accounts");
-        then.status(200)
-            .header("content-type", "application/json")
-            .json_body(json!([
-            { "private_key": "0x1", "address": "0x2" },
-            { "private_key": "0x3", "address": "0x4" }]));
-    });
-    server.mock(|when, then| {
-        when.path("/feeder_gateway/get_nonce");
-        then.status(200).body("\"0x0\"");
-    });
-    server.mock(|when, then| {
-        when.path("/feeder_gateway/estimate_fee");
-        then.status(200)
-            .header("content-type", "application/json")
-            .json_body(json!({
-              "gas_price": 1000000,
-              "gas_usage": 1349,
-              "overall_fee": 1349000000,
-              "unit": "wei"
-            }));
-    });
+    // Mock endpoints
+    common::mock_predeployed_accounts_endpoint(&server);
+    common::mock_get_nonce_endpoint(&server);
+    common::mock_estimate_fee_endpoint(&server);
 
     let assert = get_snapbox()
         .arg("deploy")
@@ -106,4 +83,7 @@ fn test_estimate_fee() {
         .success();
 
     assert.stdout_eq(expected_stdout("estimate_fee"));
+
+    // Clean env after finishing using the mocked network
+    clean_env()
 }

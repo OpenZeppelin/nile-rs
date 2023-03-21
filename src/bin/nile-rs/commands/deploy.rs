@@ -3,9 +3,10 @@ use async_trait::async_trait;
 use clap::Parser;
 
 use super::CliCommand;
+use nile_rs::common::devnet::get_predeployed_accounts;
 use nile_rs::core::accounts::OZAccount;
+use nile_rs::core::status::get_tx_status;
 use nile_rs::core::Deployments;
-use nile_rs::utils::devnet::get_predeployed_accounts;
 
 #[derive(Parser, Debug)]
 #[command(group(
@@ -66,6 +67,14 @@ pub struct Deploy {
     )]
     pub estimate_fee: bool,
 
+    #[clap(
+        short,
+        long,
+        help = "Block until the transaction gets either ACCEPTED or REJECTED",
+        default_value_t = false
+    )]
+    pub track: bool,
+
     #[clap(from_global)]
     network: String,
 }
@@ -102,10 +111,16 @@ impl Deploy {
                 &self.network,
             )?;
 
+            let tx_hash = format!("{:#064x}", transaction.transaction_hash);
+
             println!("⏳ Deployment successfully sent!");
             println!();
-            println!("Transaction hash: {:#064x}", transaction.transaction_hash);
+            println!("Transaction hash: {}", &tx_hash);
             println!("Contract address: {:#064x}", address);
+
+            if self.track {
+                get_tx_status(&tx_hash, &self.network, self.track).await?;
+            }
         }
         Ok(())
     }

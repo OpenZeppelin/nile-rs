@@ -41,6 +41,9 @@ async fn main() -> Result<()> {
         cli::Commands::Setup(cmd) => {
             cmd.run().await?;
         }
+        cli::Commands::Status(cmd) => {
+            cmd.run().await?;
+        }
     };
 
     Ok(())

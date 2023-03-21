@@ -4,6 +4,7 @@ use clap::Parser;
 
 use super::CliCommand;
 use nile_rs::core::accounts::OZAccountFactory;
+use nile_rs::core::status::get_tx_status;
 use nile_rs::core::Deployments;
 
 #[derive(Parser, Debug)]
@@ -27,6 +28,14 @@ pub struct Setup {
         default_value_t = false
     )]
     pub estimate_fee: bool,
+
+    #[clap(
+        short,
+        long,
+        help = "Block until the transaction gets either ACCEPTED or REJECTED",
+        default_value_t = false
+    )]
+    pub track: bool,
 
     #[clap(from_global)]
     network: String,
@@ -66,10 +75,16 @@ impl CliCommand for Setup {
                 &self.network,
             )?;
 
+            let tx_hash = format!("{:#064x}", transaction.transaction_hash);
+
             println!("⏳ Transaction successfully sent!");
             println!();
-            println!("Transaction hash: {:#064x}", transaction.transaction_hash);
+            println!("Transaction hash: {}", &tx_hash);
             println!("Counterfactual address: {:#064x}", address);
+
+            if self.track {
+                get_tx_status(&tx_hash, &self.network, self.track).await?;
+            }
 
             Ok(())
         }

@@ -8,13 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- A command to compile Cairo1 contracts to Sierra (`compile-cairo`)
-- A command to compile Sierra artifacts to Casm (`compile-sierra`)
-- A command to generate Abi, Sierra, and Casm artifacts from Cairo1 contracts (`compile`)
 - A command to initialize a Nile project (`init`)
 - A simple scripting system
 - A command to run script from a Nile project (`run`)
 - The `setup` command
 - The `declare` command
+- The `send` command
+- The `deploy` command
+- The `raw-call` command (without parsing the ABI)
+- The `counterfactual-address` command
 - Predeployed accounts usage from devnet
 - A configuration file
+- An NRE interface for scripting

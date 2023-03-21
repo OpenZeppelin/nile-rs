@@ -23,3 +23,7 @@ pub fn mock_network(network: &str, gateway: &str) {
 
     std::env::set_var("NILE_RS_NETWORKS", networks);
 }
+
+pub fn clean_env() {
+    std::env::remove_var("NILE_RS_NETWORKS");
+}

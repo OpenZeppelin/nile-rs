@@ -13,6 +13,9 @@ pub struct Run {
 
     #[clap(help = "Arguments for the script.", value_name = "ARGS")]
     pub args: Vec<String>,
+
+    #[clap(from_global)]
+    network: String,
 }
 
 impl Run {
@@ -36,7 +39,8 @@ impl CliCommand for Run {
         println!("Running {} script!", self.script);
 
         let mut command = Command::new("cargo");
-        command.env("NILE_RS_TARGET_SCRIPT", &self.script);
+        command.env("NILE_RS_TARGET_SCRIPT_NAME", &self.script);
+        command.env("NILE_RS_TARGET_SCRIPT_NETWORK", &self.network);
         command.arg("run").arg("--release");
 
         if !self.args.is_empty() {
@@ -56,6 +60,7 @@ impl CliCommand for Run {
 fn test_fail_to_exec() {
     let cli = Run {
         script: "declare".into(),
+        network: "localhost".into(),
         args: vec![],
     };
 

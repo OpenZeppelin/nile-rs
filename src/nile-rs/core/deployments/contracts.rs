@@ -7,7 +7,7 @@ use crate::utils::num_str_to_felt;
 const TO_REPLACE: &str = "<network>";
 const FILE_NAME_FORMAT: &str = "<network>.contracts.json";
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct ContractInfo {
     pub alias: String,
     pub address: String,
@@ -107,7 +107,9 @@ impl ContractInfo {
             )?;
         };
 
-        contracts.push(new_contract);
+        if !contracts.contains(&new_contract) {
+            contracts.push(new_contract);
+        }
 
         // Save the JSON structure into the file.
         std::fs::write(

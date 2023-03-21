@@ -1,7 +1,7 @@
 use httpmock::prelude::*;
 use serde_json::json;
 
-use nile_test_utils::{expected_stdout, mock_network, snapbox::get_snapbox};
+use nile_test_utils::{clean_env, expected_stdout, mock_network, snapbox::get_snapbox};
 
 const CONTRACT_ADDRESS: &str = "0x07cfadda3ed391f56ba9a556457bb102c0965fef2a254e750a7ce2b85458a7b0";
 
@@ -34,4 +34,7 @@ fn test_raw_call() {
         .success();
 
     assert.stdout_eq(expected_stdout("raw-call"));
+
+    // Clean env after finishing using the mocked network
+    clean_env()
 }
