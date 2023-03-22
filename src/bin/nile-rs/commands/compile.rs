@@ -1,5 +1,5 @@
-// use anyhow::Result;
-
+use std::fs;
+use std::path::PathBuf;
 use scarb::core::Config;
 use scarb::ops;
 
@@ -25,7 +25,10 @@ impl CliCommand for Compile {
 
     // Build the project using Scarb
     async fn run(&self) -> Result<Self::Output> {
-        let scarb_config_builder = Config::builder(&self.manifest_path);
+        let src = PathBuf::from(&self.manifest_path);
+        let abs_path =  fs::canonicalize(&src)?;
+
+        let scarb_config_builder = Config::builder(abs_path.to_str().unwrap());
         let scarb_config = scarb_config_builder.build()?;
         let ws = ops::read_workspace(scarb_config.manifest_path(), &scarb_config)?;
         ops::compile(&ws)

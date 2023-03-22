@@ -9,14 +9,19 @@ use std::fs;
 #[derive(Parser, Debug)]
 pub struct Init {}
 
-const BASE_PROJECT_STRUCTURE: [(&str, &str, &str); 7] = [
+const BASE_PROJECT_STRUCTURE: [(&str, &str, &str); 9] = [
     ("./", "Cargo.toml", base_project::CARGO_TOML),
     ("./", "Scarb.toml", base_project::SCARB_TOML),
     ("./", ".gitignore", base_project::GITIGNORE),
     (
-        "./contracts/",
+        "./src/",
         "hello_starknet.cairo",
         base_project::HELLO_STARKNET_CAIRO,
+    ),
+    (
+        "./src/",
+        "lib.cairo",
+        base_project::LIB_CAIRO,
     ),
     ("./scripts/.module/", "build.rs", base_project::BUILD_RS),
     (
@@ -25,6 +30,7 @@ const BASE_PROJECT_STRUCTURE: [(&str, &str, &str); 7] = [
         base_project::SCRIPTS_CARGO_TOML,
     ),
     ("./scripts/.module/src/", "main.rs", base_project::MAIN_RS),
+    ("./scripts/", "example.rs", base_project::EXAMPLE_SCRIPT),
 ];
 
 #[async_trait]
@@ -63,5 +69,5 @@ fn copy_file(to_dir: &str, file: &str, contents: &str) -> Result<()> {
 
 #[test]
 fn base_project_len() {
-    assert_eq!(BASE_PROJECT_STRUCTURE.len(), 7);
+    assert_eq!(BASE_PROJECT_STRUCTURE.len(), 9);
 }

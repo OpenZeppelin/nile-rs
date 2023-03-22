@@ -16,22 +16,25 @@ contracts_dir = "./src"
 pub const HELLO_STARKNET_CAIRO: &str = r##"#[contract]
 mod HelloStarknet {
     struct Storage {
-        balance: felt,
+        balance: felt252,
     }
 
     // Increases the balance by the given amount.
     #[external]
-    fn increase_balance(amount: felt) {
+    fn increase_balance(amount: felt252) {
         balance::write(balance::read() + amount);
     }
 
     // Returns the current balance.
     #[view]
-    fn get_balance() -> felt {
+    fn get_balance() -> felt252 {
         balance::read()
     }
 }
 "##;
+
+pub const LIB_CAIRO: &str = r#"mod hello_starknet;
+"#;
 
 pub const GITIGNORE: &str = r#"/target
 /artifacts
@@ -84,4 +87,12 @@ version = "0.1.0"
 [dependencies]
 tokio = { version = "1"}
 nile-rs = { path = "../../../" }
+"#;
+
+pub const EXAMPLE_SCRIPT: &str = r#"async fn run(nre: NileRuntimeEnvironment) {
+    println!("Running");
+
+    let accounts = nre.get_accounts();
+    println!("Accounts: {:?}", accounts);
+}
 "#;

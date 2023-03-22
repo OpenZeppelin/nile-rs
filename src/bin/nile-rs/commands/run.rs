@@ -35,6 +35,17 @@ impl CliCommand for Run {
     type Output = ();
 
     /// Execute a script under the scripts directory
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// // scripts/test.rs
+    /// async fn run(nre: NileRuntimeEnvironment) {
+    /// println!("Running");
+    ///
+    /// let accounts = nre.get_accounts();
+    /// println!("Accounts: {:?}", accounts);
+    /// ```
     async fn run(&self) -> Result<Self::Output> {
         println!("Running {} script!", self.script);
 
