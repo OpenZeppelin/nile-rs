@@ -9,7 +9,8 @@ use std::fs;
 #[derive(Parser, Debug)]
 pub struct Init {}
 
-const BASE_PROJECT_STRUCTURE: [(&str, &str, &str); 9] = [
+const BASE_PROJECT_STRUCTURE: [(&str, &str, &str); 10] = [
+    ("./", ".env", base_project::DOT_ENV),
     ("./", "Cargo.toml", base_project::CARGO_TOML),
     ("./", "Scarb.toml", base_project::SCARB_TOML),
     ("./", ".gitignore", base_project::GITIGNORE),
@@ -46,6 +47,8 @@ impl CliCommand for Init {
 
         println!("🗄  Creating project directory tree");
         println!("⛵️ Nile project ready!");
+        println!();
+        println!("Try running: `nile-rs compile`");
 
         Ok(())
     }
@@ -65,5 +68,5 @@ fn copy_file(to_dir: &str, file: &str, contents: &str) -> Result<()> {
 
 #[test]
 fn base_project_len() {
-    assert_eq!(BASE_PROJECT_STRUCTURE.len(), 9);
+    assert_eq!(BASE_PROJECT_STRUCTURE.len(), 10);
 }

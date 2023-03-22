@@ -11,6 +11,12 @@ version = "0.1.0"    # the current version, obeying semver
 [tool.nile_rs]
 artifacts_dir = "./target/release"
 contracts_dir = "./src"
+
+# This is the default localhost configuration, the value is added as an example
+# and you can safely remove it.
+networks = [
+    { name = "localhost", gateway = "http://127.0.0.1:5050/gateway", chain_id = "1536727068981429685321" }
+]
 "#;
 
 pub const HELLO_STARKNET_CAIRO: &str = r##"#[contract]
@@ -37,7 +43,7 @@ pub const LIB_CAIRO: &str = r#"mod hello_starknet;
 "#;
 
 pub const GITIGNORE: &str = r#"/target
-/artifacts
+/.env
 "#;
 
 pub const BUILD_RS: &str = r##"use std::env;
@@ -96,4 +102,7 @@ async fn run(nre: NileRuntimeEnvironment) {
     let accounts = nre.get_predeployed_accounts().await;
     println!("Predeployed accounts: {:?}", accounts);
 }
+"#;
+
+pub const DOT_ENV: &str = r#"TEST_ACCOUNT = 1234
 "#;
