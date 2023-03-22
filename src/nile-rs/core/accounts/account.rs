@@ -25,7 +25,7 @@ pub struct OZAccount {
 
 impl Debug for OZAccount {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_tuple("").field(&self.inner.address()).finish()
+        f.debug_tuple("address").field(&self.inner.address().to_string()).finish()
     }
 }
 

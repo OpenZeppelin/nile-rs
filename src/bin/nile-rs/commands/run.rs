@@ -39,12 +39,13 @@ impl CliCommand for Run {
     /// # Example
     ///
     /// ```rust
-    /// // scripts/test.rs
+    /// // scripts/example.rs
     /// async fn run(nre: NileRuntimeEnvironment) {
-    /// println!("Running");
+    ///     println!("Running");
     ///
-    /// let accounts = nre.get_accounts();
-    /// println!("Accounts: {:?}", accounts);
+    ///     let accounts = nre.get_predeployed_accounts().await;
+    ///     println!("Predeployed accounts: {:?}", accounts);
+    /// }
     /// ```
     async fn run(&self) -> Result<Self::Output> {
         println!("Running {} script!", self.script);

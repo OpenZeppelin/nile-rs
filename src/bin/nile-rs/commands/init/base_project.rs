@@ -8,7 +8,7 @@ version = "0.1.0"    # the current version, obeying semver
 
 [[target.starknet-contract]]
 
-[tool.nile-rs]
+[tool.nile_rs]
 artifacts_dir = "./target/release"
 contracts_dir = "./src"
 "#;
@@ -89,10 +89,11 @@ tokio = { version = "1"}
 nile-rs = { path = "../../../" }
 "#;
 
-pub const EXAMPLE_SCRIPT: &str = r#"async fn run(nre: NileRuntimeEnvironment) {
+pub const EXAMPLE_SCRIPT: &str = r#"// Requires a devnet node running
+async fn run(nre: NileRuntimeEnvironment) {
     println!("Running");
 
-    let accounts = nre.get_accounts();
-    println!("Accounts: {:?}", accounts);
+    let accounts = nre.get_predeployed_accounts().await;
+    println!("Predeployed accounts: {:?}", accounts);
 }
 "#;

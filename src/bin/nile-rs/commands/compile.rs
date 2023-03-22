@@ -4,7 +4,7 @@ use scarb::core::Config;
 use scarb::ops;
 
 use super::CliCommand;
-use anyhow::Result;
+use anyhow::{Result, Context};
 use async_trait::async_trait;
 use clap::Parser;
 
@@ -26,7 +26,9 @@ impl CliCommand for Compile {
     // Build the project using Scarb
     async fn run(&self) -> Result<Self::Output> {
         let src = PathBuf::from(&self.manifest_path);
-        let abs_path =  fs::canonicalize(&src)?;
+        let abs_path =  fs::canonicalize(&src).with_context(|| {
+          format!("Unable to build from the Scarb manifest file: {}", &self.manifest_path)
+        })?;
 
         let scarb_config_builder = Config::builder(abs_path.to_str().unwrap());
         let scarb_config = scarb_config_builder.build()?;

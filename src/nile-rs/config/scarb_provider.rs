@@ -27,7 +27,7 @@ impl Provider for ScarbProvider {
     let mut map = Map::new();
 
     if let Some((profile, _)) = pair {
-        map.insert(profile, Figment::from(&self.provider).extract_inner("tool.nile")?);
+        map.insert(profile, Figment::from(&self.provider).extract_inner("tool.nile_rs")?);
     }
 
     Ok(map)

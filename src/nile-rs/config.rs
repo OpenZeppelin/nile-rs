@@ -120,7 +120,7 @@ mod tests {
             jail.create_file(
                 "Scarb.toml",
                 r#"
-            [tool.nile]
+            [tool.nile_rs]
             contracts_dir = "other_contracts/"
             artifacts_dir = "other_artifacts/"
             networks = [
@@ -157,7 +157,7 @@ mod tests {
             jail.create_file(
                 "Scarb.toml",
                 r#"
-            [tool.nile]
+            [tool.nile_rs]
             contracts_dir = "other_contracts/"
             "#,
             )?;
@@ -208,7 +208,7 @@ mod tests {
             jail.create_file(
                 "Scarb.toml",
                 r#"
-            [tool.nile]
+            [tool.nile_rs]
             networks = [
                 { name = "local1", gateway = "prov1", chain_id = "1" },
                 { name = "local2", gateway = "prov2", chain_id = "2" },
