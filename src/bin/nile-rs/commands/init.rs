@@ -18,11 +18,7 @@ const BASE_PROJECT_STRUCTURE: [(&str, &str, &str); 9] = [
         "hello_starknet.cairo",
         base_project::HELLO_STARKNET_CAIRO,
     ),
-    (
-        "./src/",
-        "lib.cairo",
-        base_project::LIB_CAIRO,
-    ),
+    ("./src/", "lib.cairo", base_project::LIB_CAIRO),
     ("./scripts/.module/", "build.rs", base_project::BUILD_RS),
     (
         "./scripts/.module/",

@@ -1,10 +1,10 @@
-use std::fs;
-use std::path::PathBuf;
 use scarb::core::Config;
 use scarb::ops;
+use std::fs;
+use std::path::PathBuf;
 
 use super::CliCommand;
-use anyhow::{Result, Context};
+use anyhow::{Context, Result};
 use async_trait::async_trait;
 use clap::Parser;
 
@@ -26,8 +26,11 @@ impl CliCommand for Compile {
     // Build the project using Scarb
     async fn run(&self) -> Result<Self::Output> {
         let src = PathBuf::from(&self.manifest_path);
-        let abs_path =  fs::canonicalize(&src).with_context(|| {
-          format!("Unable to build from the Scarb manifest file: {}", &self.manifest_path)
+        let abs_path = fs::canonicalize(src).with_context(|| {
+            format!(
+                "Unable to build from the Scarb manifest file: {}",
+                &self.manifest_path
+            )
         })?;
 
         let scarb_config_builder = Config::builder(abs_path.to_str().unwrap());
