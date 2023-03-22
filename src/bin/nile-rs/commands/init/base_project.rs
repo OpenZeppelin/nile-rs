@@ -2,9 +2,15 @@ pub const CARGO_TOML: &str = r#"[workspace]
 members = ["scripts/.module"]
 "#;
 
-pub const NILE_TOML: &str = r#"[nile]
-contracts_dir = "contracts/"
-artifacts_dir = "artifacts/"
+pub const SCARB_TOML: &str = r#"[package]
+name = "nile_project" # the name of the package
+version = "0.1.0"    # the current version, obeying semver
+
+[[target.starknet-contract]]
+
+[tool.nile-rs]
+artifacts_dir = "./target/release"
+contracts_dir = "./src"
 "#;
 
 pub const HELLO_STARKNET_CAIRO: &str = r##"#[contract]

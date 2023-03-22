@@ -1,12 +1,14 @@
 use figment::{
-    providers::{Env, Format, Serialized, Toml},
+    providers::{Env, Serialized},
     Error, Figment,
 };
 use serde::{Deserialize, Serialize};
 
 mod default;
+mod scarb_provider;
 
 use crate::core::types::Network;
+use scarb_provider::ScarbProvider;
 
 #[derive(Deserialize, Serialize)]
 pub struct Config {
@@ -85,7 +87,7 @@ impl Config {
 
     fn figment() -> Figment {
         Figment::from(Serialized::defaults(Config::default()))
-            .merge(Toml::file("Nile.toml"))
+            .merge(ScarbProvider::new("Scarb.toml"))
             .merge(Env::prefixed("NILE_RS_"))
     }
 }
@@ -116,11 +118,11 @@ mod tests {
     fn toml_provider() {
         figment::Jail::expect_with(|jail| {
             jail.create_file(
-                "Nile.toml",
+                "Scarb.toml",
                 r#"
+            [tool.nile]
             contracts_dir = "other_contracts/"
             artifacts_dir = "other_artifacts/"
-
             networks = [
                 { name = "local1", gateway = "prov1", chain_id = "1" },
                 { name = "local2", gateway = "prov2", chain_id = "2" },
@@ -153,8 +155,9 @@ mod tests {
     fn combined_providers() {
         figment::Jail::expect_with(|jail| {
             jail.create_file(
-                "Nile.toml",
+                "Scarb.toml",
                 r#"
+            [tool.nile]
             contracts_dir = "other_contracts/"
             "#,
             )?;
@@ -203,8 +206,9 @@ mod tests {
     fn get_network() {
         figment::Jail::expect_with(|jail| {
             jail.create_file(
-                "Nile.toml",
+                "Scarb.toml",
                 r#"
+            [tool.nile]
             networks = [
                 { name = "local1", gateway = "prov1", chain_id = "1" },
                 { name = "local2", gateway = "prov2", chain_id = "2" },

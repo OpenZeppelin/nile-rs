@@ -1,4 +1,5 @@
 mod call;
+mod compile;
 mod counterfactual_address;
 mod declare;
 mod deploy;
@@ -9,6 +10,7 @@ mod setup;
 mod status;
 
 pub use call::Call;
+pub use compile::Compile;
 pub use counterfactual_address::CounterfactualAddress;
 pub use declare::Declare;
 pub use deploy::Deploy;
