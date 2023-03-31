@@ -1,5 +1,7 @@
 use anyhow::{Context, Ok, Result};
-use starknet_accounts::{Account, Call, Declaration, Execution, SingleOwnerAccount};
+use starknet_accounts::{
+    Account, Call, Declaration, Execution, LegacyDeclaration, SingleOwnerAccount,
+};
 use starknet_core::utils::get_selector_from_name;
 use starknet_crypto::FieldElement;
 use starknet_providers::SequencerGatewayProvider;
@@ -7,6 +9,7 @@ use starknet_signers::LocalWallet;
 use std::fmt::Debug;
 use std::sync::Arc;
 
+use crate::common::{get_compiled_class, get_contract_class};
 use crate::core::Deployments;
 use crate::utils::num_str_to_felt;
 use crate::{
@@ -61,14 +64,31 @@ impl OZAccount {
         })
     }
 
+    /// Declare Cairo 1 artifacts
+    pub fn declare(
+        &self,
+        contract_name: &str,
+    ) -> Result<Declaration<SingleOwnerAccount<SequencerGatewayProvider, LocalWallet>>> {
+        let contract_artifact = get_contract_class(contract_name)?;
+        let compiled_class_hash = get_compiled_class(contract_name)?.class_hash()?;
+
+        // We need to flatten the ABI into a string first
+        let flatten_class = contract_artifact.flantten().unwrap();
+
+        let declaration = self
+            .inner
+            .declare(Arc::new(flatten_class), compiled_class_hash);
+        Ok(declaration)
+    }
+
     /// Declare Cairo 0 artifacts
     pub fn legacy_declare(
         &self,
         contract_name: &str,
-    ) -> Result<Declaration<SingleOwnerAccount<SequencerGatewayProvider, LocalWallet>>> {
+    ) -> Result<LegacyDeclaration<SingleOwnerAccount<SequencerGatewayProvider, LocalWallet>>> {
         let contract_artifact = get_legacy_contract_class(contract_name)?;
 
-        let declaration = self.inner.declare(Arc::new(contract_artifact));
+        let declaration = self.inner.declare_legacy(Arc::new(contract_artifact));
         Ok(declaration)
     }
 

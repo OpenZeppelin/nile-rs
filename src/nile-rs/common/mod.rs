@@ -5,6 +5,9 @@ pub mod legacy;
 pub use constants::*;
 
 use anyhow::{Context, Ok, Result};
+use cairo_lang_starknet::casm_contract_class::CasmContractClass;
+use cairo_lang_starknet::contract_class::ContractClass;
+use starknet_core::types::contract::{CompiledClass, SierraClass};
 use starknet_crypto::FieldElement;
 use starknet_providers::SequencerGatewayProvider;
 use starknet_signers::{LocalWallet, SigningKey};
@@ -53,6 +56,34 @@ pub fn get_network_and_provider(network: &str) -> Result<(Network, SequencerGate
         Url::parse(&network.normalized_feeder_gateway())?,
     );
     Ok((network, provider))
+}
+
+pub fn get_contract_class(contract_name: &str) -> Result<SierraClass> {
+    let config = Config::get()?;
+    let path = [&config.artifacts_dir, "/", contract_name, ".json"].concat();
+
+    let context = || {
+        format!(
+            "Failed to read the artifact from: `{}`",
+            path.replace("//", "/")
+        )
+    };
+    serde_json::from_reader(std::fs::File::open(&path).with_context(context)?).with_context(context)
+}
+
+pub fn get_compiled_class(contract_name: &str) -> Result<CompiledClass> {
+    let config = Config::get()?;
+    let path = [&config.artifacts_dir, "/", contract_name, ".json"].concat();
+
+    let contract_class: ContractClass = serde_json::from_reader(std::fs::File::open(path)?)?;
+
+    let casm_contract_class = CasmContractClass::from_contract_class(contract_class, false)
+        .with_context(|| "Compilation failed.")?;
+    let json = serde_json::to_string_pretty(&casm_contract_class)
+        .with_context(|| "Serialization failed.")?;
+
+    serde_json::from_str::<CompiledClass>(&json)
+        .with_context(|| "Deserializating casm contract class failed.")
 }
 
 pub fn normalize_calldata(calldata: Vec<String>) -> Vec<FieldElement> {

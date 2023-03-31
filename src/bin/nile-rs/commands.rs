@@ -12,7 +12,7 @@ mod status;
 pub use call::Call;
 pub use compile::Compile;
 pub use counterfactual_address::CounterfactualAddress;
-pub use declare::Declare;
+pub use declare::{DeclareV1, DeclareV2 as Declare};
 pub use deploy::Deploy;
 pub use init::Init;
 pub use run::Run;

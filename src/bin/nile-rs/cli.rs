@@ -1,5 +1,6 @@
 use crate::commands::{
-    Call, Compile, CounterfactualAddress, Declare, Deploy, Init, Run, Send, Setup, Status,
+    Call, Compile, CounterfactualAddress, Declare, DeclareV1, Deploy, Init, Run, Send, Setup,
+    Status,
 };
 use clap::{Parser, Subcommand};
 
@@ -36,6 +37,9 @@ pub enum Commands {
 
     #[clap(about = "Declare a contract through an Account")]
     Declare(Declare),
+
+    #[clap(about = "Declare a legacy contract through an Account (Cairo 0)")]
+    LegacyDeclare(DeclareV1),
 
     #[clap(about = "Deploy a contract through an Account")]
     Deploy(Deploy),

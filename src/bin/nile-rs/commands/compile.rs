@@ -1,10 +1,11 @@
+use anyhow::{Context, Result};
 use scarb::core::Config;
 use scarb::ops;
 use std::fs;
 use std::path::PathBuf;
+use std::thread;
 
 use super::CliCommand;
-use anyhow::{Context, Result};
 use async_trait::async_trait;
 use clap::Parser;
 
@@ -33,9 +34,14 @@ impl CliCommand for Compile {
             )
         })?;
 
-        let scarb_config_builder = Config::builder(abs_path.to_str().unwrap());
-        let scarb_config = scarb_config_builder.build()?;
-        let ws = ops::read_workspace(scarb_config.manifest_path(), &scarb_config)?;
-        ops::compile(&ws)
+        let thread = thread::spawn(move || {
+            let scarb_config_builder = Config::builder(abs_path.to_str().unwrap());
+            let scarb_config = scarb_config_builder.build()?;
+            let ws = ops::read_workspace(scarb_config.manifest_path(), &scarb_config)?;
+            ops::compile(&ws)
+        });
+
+        thread.join().expect("Compilation thread panicked")?;
+        Ok(())
     }
 }
