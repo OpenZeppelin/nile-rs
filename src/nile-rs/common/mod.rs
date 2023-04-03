@@ -85,29 +85,24 @@ pub fn get_compiled_class(contract_name: &str) -> Result<CompiledClass> {
         )
     };
     let deserializing_context = "Deserializating casm contract class failed";
-    // Check if the Casm is already present
-    if casm_path.exists() {
-        serde_json::from_reader(std::fs::File::open(casm_path)?)
-            .with_context(|| deserializing_context)
-    } else {
-        let contract_class: ContractClass =
-            serde_json::from_reader(std::fs::File::open(&path).with_context(context)?)
-                .with_context(context)?;
 
-        let casm_contract_class = CasmContractClass::from_contract_class(contract_class, false)
-            .with_context(|| "Compilation failed.")?;
-        let res = serde_json::to_string_pretty(&casm_contract_class)
-            .with_context(|| "Serialization failed.")?;
+    let contract_class: ContractClass =
+        serde_json::from_reader(std::fs::File::open(&path).with_context(context)?)
+            .with_context(context)?;
 
-        std::fs::write(&casm_path, &res).with_context(|| {
-            format!(
-                "Failed to write Casm output to: {}",
-                casm_path.to_str().unwrap()
-            )
-        })?;
+    let casm_contract_class = CasmContractClass::from_contract_class(contract_class, false)
+        .with_context(|| "Compilation failed.")?;
+    let res = serde_json::to_string_pretty(&casm_contract_class)
+        .with_context(|| "Serialization failed.")?;
 
-        serde_json::from_str::<CompiledClass>(&res).with_context(|| deserializing_context)
-    }
+    std::fs::write(&casm_path, &res).with_context(|| {
+        format!(
+            "Failed to write Casm output to: {}",
+            casm_path.to_str().unwrap()
+        )
+    })?;
+
+    serde_json::from_str::<CompiledClass>(&res).with_context(|| deserializing_context)
 }
 
 pub fn normalize_calldata(calldata: Vec<String>) -> Vec<FieldElement> {

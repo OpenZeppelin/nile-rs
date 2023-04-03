@@ -32,7 +32,7 @@ fn test_declare() {
     common::mock_add_transaction_endpoint(&server);
 
     let assert = get_snapbox()
-        .arg("declare")
+        .arg("legacy-declare")
         .arg("contract")
         .arg("-p")
         .arg(private_key_env)
@@ -71,7 +71,7 @@ fn test_estimate_fee() {
     common::mock_estimate_fee_endpoint(&server);
 
     let assert = get_snapbox()
-        .arg("declare")
+        .arg("legacy-declare")
         .arg("contract")
         .arg("-d")
         .arg("0")
