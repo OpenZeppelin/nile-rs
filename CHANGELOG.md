@@ -20,3 +20,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Predeployed accounts usage from devnet
 - A configuration file
 - An NRE interface for scripting
+- Add compilation using Scarb
