@@ -1,5 +1,6 @@
 use crate::commands::{
-    Call, CounterfactualAddress, Declare, Deploy, Init, Run, Send, Setup, Status,
+    Call, Compile, CounterfactualAddress, Declare, DeclareV1, Deploy, GetAccounts, GetBalance,
+    GetNonce, Init, LegacyDeploy, Run, Send, Setup, Status,
 };
 use clap::{Parser, Subcommand};
 
@@ -28,14 +29,23 @@ pub enum Commands {
     #[clap(about = "Query the blockchain with a function call")]
     RawCall(Call),
 
+    #[clap(about = "Build the project using Scarb")]
+    Compile(Compile),
+
     #[clap(about = "Get counterfactual address from signer")]
     CounterfactualAddress(CounterfactualAddress),
 
     #[clap(about = "Declare a contract through an Account")]
     Declare(Declare),
 
-    #[clap(about = "Deploy a contract through an Account")]
+    #[clap(about = "Declare a legacy contract through an Account (Cairo 0)")]
+    LegacyDeclare(DeclareV1),
+
+    #[clap(about = "Deploy a Cairo 1 contract through an Account")]
     Deploy(Deploy),
+
+    #[clap(about = "Deploy a legacy contract through an Account")]
+    LegacyDeploy(LegacyDeploy),
 
     #[clap(about = "Execute a script from the scripts folder")]
     Run(Run),
@@ -48,6 +58,15 @@ pub enum Commands {
 
     #[clap(about = "Query the status of a transaction")]
     Status(Status),
+
+    #[clap(about = "Query the nonce from an address")]
+    GetNonce(GetNonce),
+
+    #[clap(about = "Query the balance from an address")]
+    GetBalance(GetBalance),
+
+    #[clap(about = "Query the registered accounts from the given network")]
+    GetAccounts(GetAccounts),
 }
 
 #[test]

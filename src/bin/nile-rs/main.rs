@@ -23,13 +23,22 @@ async fn main() -> Result<()> {
         cli::Commands::RawCall(cmd) => {
             cmd.run().await?;
         }
+        cli::Commands::Compile(cmd) => {
+            cmd.run().await?;
+        }
         cli::Commands::CounterfactualAddress(cmd) => {
             cmd.run().await?;
         }
         cli::Commands::Declare(cmd) => {
             cmd.run().await?;
         }
+        cli::Commands::LegacyDeclare(cmd) => {
+            cmd.run().await?;
+        }
         cli::Commands::Deploy(cmd) => {
+            cmd.run().await?;
+        }
+        cli::Commands::LegacyDeploy(cmd) => {
             cmd.run().await?;
         }
         cli::Commands::Run(cmd) => {
@@ -42,6 +51,15 @@ async fn main() -> Result<()> {
             cmd.run().await?;
         }
         cli::Commands::Status(cmd) => {
+            cmd.run().await?;
+        }
+        cli::Commands::GetNonce(cmd) => {
+            cmd.run().await?;
+        }
+        cli::Commands::GetBalance(cmd) => {
+            cmd.run().await?;
+        }
+        cli::Commands::GetAccounts(cmd) => {
             cmd.run().await?;
         }
     };
