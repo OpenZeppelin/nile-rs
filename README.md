@@ -82,7 +82,7 @@ Nile-rs is a rust binary application, and while we plan to improve the distribut
 
 6. Declare the contract.
 
-    If this command fails with an unexpected error, you are probably using the wrong version of starknet-devnet and/or the compiler. We will work on improving the errors feedback in the future.
+    If this command fails with an unexpected error, you are probably using the wrong version of starknet-devnet and/or the compiler. We will work on improving the error feedback in the future.
 
     ```
     nile-rs declare test_HelloStarknet -d 0
@@ -95,9 +95,9 @@ Nile-rs is a rust binary application, and while we plan to improve the distribut
     Class hash: 0x...
     ```
 
-    Note the `-d 0` argument, this makes nile to use the first predeployed account from the devnet node.
+    Note the `-d 0` argument, this makes nile use the first predeployed account from the devnet node.
 
-7. Check the status of the transaction with the `status` command. We could have use the `--track` flag when declaring for waiting for the transaction to be confirmed.
+7. Check the status of the transaction with the `status` command. We could have used the `--track` flag when declaring for waiting for the transaction to be confirmed.
 
     ```
     nile-rs status [tx_hash]
@@ -127,7 +127,7 @@ Nile-rs is a rust binary application, and while we plan to improve the distribut
 9. Query the contract to get current the balance.
 
     ```
-    nile-rs raw-call [CONTRACT_ADDRESS] get_balance
+    nile-rs raw-call [contract_address] get_balance
     ```
     ```
     CallContractResult {
@@ -144,7 +144,7 @@ Nile-rs is a rust binary application, and while we plan to improve the distribut
 10. Send a transaction to increase the balance.
 
     ```
-    nile-rs send --address [CONTRACT_ADDRESS] increase_balance 5 -d 0 -t
+    nile-rs send --address [contract_address] increase_balance 5 -d 0 -t
     ```
     ```
     ⏳ Transaction successfully sent!
@@ -157,7 +157,7 @@ Nile-rs is a rust binary application, and while we plan to improve the distribut
 11. Check the balance again.
 
     ```
-    nile-rs raw-call [CONTRACT_ADDRESS] get_balance
+    nile-rs raw-call [contract_address] get_balance
     ```
     ```
     CallContractResult {
