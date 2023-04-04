@@ -1,5 +1,9 @@
 use crate::{
-    common::{devnet::get_predeployed_accounts, get_registered_accounts, getters::{get_nonce, get_balance}},
+    common::{
+        devnet::get_predeployed_accounts,
+        get_registered_accounts,
+        getters::{get_balance, get_nonce},
+    },
     config::Config,
     core::{accounts::OZAccount, types::Network},
 };

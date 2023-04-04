@@ -30,8 +30,8 @@ impl CliCommand for GetAccounts {
 
         println!();
         for (i, account) in accounts.iter().enumerate() {
-          println!("Account {}: {:#064x}", i, account.address)
-        };
+            println!("Account {}: {:#064x}", i, account.address)
+        }
 
         Ok(())
     }
