@@ -95,7 +95,7 @@ Nile-rs is a rust binary application, and while we plan to improve the distribut
     Class hash: 0x...
     ```
 
-    Note the `-d 0` argument, this makes nile use the first predeployed account from the devnet node.
+    Notice the `-d 0` argument, this makes nile use the first predeployed account from the devnet node.
 
 7. Check the status of the transaction with the `status` command. We could have used the `--track` flag when declaring for waiting for the transaction to be confirmed.
 
@@ -122,7 +122,7 @@ Nile-rs is a rust binary application, and while we plan to improve the distribut
     ✅ Transaction status: AcceptedOnL2
     ```
 
-    Note the `-t` flag for tracking the status.
+    Notice the `-t` flag for tracking the status.
 
 9. Query the contract to get current the balance.
 
