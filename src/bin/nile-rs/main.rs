@@ -38,6 +38,9 @@ async fn main() -> Result<()> {
         cli::Commands::Deploy(cmd) => {
             cmd.run().await?;
         }
+        cli::Commands::LegacyDeploy(cmd) => {
+            cmd.run().await?;
+        }
         cli::Commands::Run(cmd) => {
             cmd.run().await?;
         }

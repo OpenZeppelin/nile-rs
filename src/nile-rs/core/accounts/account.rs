@@ -118,6 +118,56 @@ impl OZAccount {
         Execution<SingleOwnerAccount<SequencerGatewayProvider, LocalWallet>>,
         FieldElement,
     )> {
+        let contract_artifact = get_contract_class(contract_name)?;
+        let class_hash = contract_artifact.class_hash()?;
+        let constructor_calldata = normalize_calldata(calldata);
+
+        let mut calldata = vec![
+            class_hash,
+            salt.into(),
+            if unique {
+                FieldElement::ONE
+            } else {
+                FieldElement::ZERO
+            },
+            constructor_calldata.len().into(),
+        ];
+        constructor_calldata
+            .iter()
+            .for_each(|item| calldata.push(*item));
+
+        let address = udc_deployment_address(
+            class_hash,
+            salt.into(),
+            unique,
+            &constructor_calldata,
+            self.address,
+        )?;
+
+        Ok((
+            Execution::new(
+                vec![Call {
+                    to: UDC_ADDRESS,
+                    selector: SELECTOR_DEPLOYCONTRACT,
+                    calldata,
+                }],
+                &self.inner,
+            ),
+            address,
+        ))
+    }
+
+    /// Deploy legacy contracts through UDC
+    pub fn legacy_deploy(
+        &self,
+        contract_name: &str,
+        salt: u32,
+        unique: bool,
+        calldata: Vec<String>,
+    ) -> Result<(
+        Execution<SingleOwnerAccount<SequencerGatewayProvider, LocalWallet>>,
+        FieldElement,
+    )> {
         let class_hash = get_legacy_class_hash(contract_name)?;
         let constructor_calldata = normalize_calldata(calldata);
 
