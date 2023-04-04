@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - A command to initialize a Nile project (`init`)
 - A simple scripting system
-- A command to run script from a Nile project (`run`)
+- A command to run scripts from a Nile project (`run`)
 - The `setup` command
 - The `declare` command
 - The `send` command
@@ -20,3 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Predeployed accounts usage from devnet
 - A configuration file
 - An NRE interface for scripting
+- Cairo 1 compilation using Scarb
+- The `legacy-declare` command
+- The `legacy-deploy` command
+- The `get-nonce` command
+- The `get-balance` command
+- The `get-accounts` command
