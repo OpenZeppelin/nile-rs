@@ -1,6 +1,6 @@
 use crate::commands::{
-    Call, Compile, CounterfactualAddress, Declare, DeclareV1, Deploy, Init, Run, Send, Setup,
-    Status,
+    Call, Compile, CounterfactualAddress, Declare, DeclareV1, Deploy, GetAccounts, GetBalance,
+    GetNonce, Init, Run, Send, Setup, Status,
 };
 use clap::{Parser, Subcommand};
 
@@ -55,6 +55,15 @@ pub enum Commands {
 
     #[clap(about = "Query the status of a transaction")]
     Status(Status),
+
+    #[clap(about = "Query the nonce from an address")]
+    GetNonce(GetNonce),
+
+    #[clap(about = "Query the balance from an address")]
+    GetBalance(GetBalance),
+
+    #[clap(about = "Query the registered accounts from the given network")]
+    GetAccounts(GetAccounts),
 }
 
 #[test]

@@ -50,6 +50,15 @@ async fn main() -> Result<()> {
         cli::Commands::Status(cmd) => {
             cmd.run().await?;
         }
+        cli::Commands::GetNonce(cmd) => {
+            cmd.run().await?;
+        }
+        cli::Commands::GetBalance(cmd) => {
+            cmd.run().await?;
+        }
+        cli::Commands::GetAccounts(cmd) => {
+            cmd.run().await?;
+        }
     };
 
     Ok(())

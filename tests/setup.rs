@@ -3,7 +3,7 @@ mod common;
 use httpmock::prelude::*;
 use std::env;
 
-use nile_rs::common::get_accounts;
+use nile_rs::common::get_registered_accounts;
 use nile_test_utils::{clean_env, expected_stdout, mock_network, snapbox::get_snapbox};
 
 #[test]
@@ -29,7 +29,7 @@ fn test_setup_with_goerli() {
     let cwd = env::current_dir().unwrap();
     assert!(env::set_current_dir(&temp).is_ok());
     env::set_var("ACCOUNT_1_PK", "1");
-    let accounts = get_accounts(network).unwrap();
+    let accounts = get_registered_accounts(network).unwrap();
     env::remove_var("ACCOUNT_1_PK");
     assert!(env::set_current_dir(cwd).is_ok());
 

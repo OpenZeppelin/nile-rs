@@ -1,6 +1,7 @@
 pub mod artifacts;
 mod constants;
 pub mod devnet;
+pub mod getters;
 pub mod legacy;
 pub use constants::*;
 
@@ -19,7 +20,7 @@ use crate::core::deployments::AccountInfo;
 use crate::core::types::Network;
 use crate::utils::{is_number, num_str_to_felt, short_str_to_felt};
 
-pub fn get_accounts(network: &str) -> Result<Vec<OZAccount>> {
+pub fn get_registered_accounts(network: &str) -> Result<Vec<OZAccount>> {
     let accounts: Vec<AccountInfo> = AccountInfo::load_all(network)?;
 
     let oz_accounts: Vec<OZAccount> = accounts
