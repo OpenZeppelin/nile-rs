@@ -22,12 +22,12 @@ figment = { version = "0.10", features = ["toml", "env", "test"] }
 scarb = "0.1.0"
 serde = "1.0.152"
 serde_json = "1.0.93"
-starknet-accounts = { git = "https://github.com/xJonathanLEI/starknet-rs" }
-starknet-core = { git = "https://github.com/xJonathanLEI/starknet-rs" }
-starknet-contract = { git = "https://github.com/xJonathanLEI/starknet-rs" }
-starknet-crypto = { git = "https://github.com/xJonathanLEI/starknet-rs" }
-starknet-providers = { git = "https://github.com/xJonathanLEI/starknet-rs" }
-starknet-signers = { git = "https://github.com/xJonathanLEI/starknet-rs" }
+starknet-accounts = { git = "https://github.com/xJonathanLEI/starknet-rs", rev = "e72cc0a" }
+starknet-core = { git = "https://github.com/xJonathanLEI/starknet-rs", rev = "e72cc0a" }
+starknet-contract = { git = "https://github.com/xJonathanLEI/starknet-rs", rev = "e72cc0a" }
+starknet-crypto = { git = "https://github.com/xJonathanLEI/starknet-rs", rev = "e72cc0a" }
+starknet-providers = { git = "https://github.com/xJonathanLEI/starknet-rs", rev = "e72cc0a" }
+starknet-signers = { git = "https://github.com/xJonathanLEI/starknet-rs", rev = "e72cc0a" }
 tokio = { version = "1", features = ["full"] }
 url = "2.3.1"
 walkdir = "2.3.2"

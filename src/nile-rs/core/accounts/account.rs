@@ -73,7 +73,7 @@ impl OZAccount {
         let compiled_class_hash = get_compiled_class(contract_name)?.class_hash()?;
 
         // We need to flatten the ABI into a string first
-        let flatten_class = contract_artifact.flantten().unwrap();
+        let flatten_class = contract_artifact.flatten().unwrap();
 
         let declaration = self
             .inner
