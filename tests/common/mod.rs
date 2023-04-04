@@ -2,6 +2,13 @@
 use httpmock::prelude::*;
 use serde_json::json;
 
+pub fn mock_get_storage_endpoint(server: &MockServer) {
+    server.mock(|when, then| {
+        when.path("/feeder_gateway/get_storage_at");
+        then.status(200).body("\"0x5\"");
+    });
+}
+
 pub fn mock_get_status_endpoint(server: &MockServer) {
     server.mock(|when, then| {
         when.path("/feeder_gateway/get_transaction_status");

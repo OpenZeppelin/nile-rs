@@ -1,2 +1,8 @@
 /target
 /cov-target
+
+# node
+**/node_modules/
+
+# docs
+docs/build/

@@ -8,13 +8,13 @@ use std::env;
 use nile_test_utils::{clean_env, expected_stdout, mock_network, snapbox::get_snapbox};
 
 #[test]
-fn test_deploy() {
+fn test_legacy_declare() {
     let private_key_env = "ACCOUNT_1_PK";
     let network = "localhost";
 
     // Register the account locally
     let temp = assert_fs::TempDir::new().unwrap();
-    temp.copy_from("./tests/fixtures", &["artifacts/cairo1_contract.json"])
+    temp.copy_from("./tests/fixtures", &["artifacts/cairo0_contract.json"])
         .unwrap();
 
     let cwd = env::current_dir().unwrap();
@@ -32,8 +32,8 @@ fn test_deploy() {
     common::mock_add_transaction_endpoint(&server);
 
     let assert = get_snapbox()
-        .arg("deploy")
-        .arg("cairo1_contract")
+        .arg("legacy-declare")
+        .arg("cairo0_contract")
         .arg("-p")
         .arg(private_key_env)
         .arg("--network")
@@ -46,7 +46,7 @@ fn test_deploy() {
         .assert()
         .success();
 
-    assert.stdout_eq(expected_stdout("deploy"));
+    assert.stdout_eq(expected_stdout("declare"));
 
     // Clean env after finishing using the mocked network
     clean_env()
@@ -58,7 +58,7 @@ fn test_fee_estimation() {
 
     // Register the account locally
     let temp = assert_fs::TempDir::new().unwrap();
-    temp.copy_from("./tests/fixtures", &["artifacts/cairo1_contract.json"])
+    temp.copy_from("./tests/fixtures", &["artifacts/cairo0_contract.json"])
         .unwrap();
 
     // Mock the provider
@@ -66,13 +66,13 @@ fn test_fee_estimation() {
     mock_network(network, &server.url("/gateway"));
 
     // Mock endpoints
-    common::mock_predeployed_accounts_endpoint(&server);
     common::mock_get_nonce_endpoint(&server);
+    common::mock_predeployed_accounts_endpoint(&server);
     common::mock_estimate_fee_endpoint(&server);
 
     let assert = get_snapbox()
-        .arg("deploy")
-        .arg("cairo1_contract")
+        .arg("legacy-declare")
+        .arg("cairo0_contract")
         .arg("-d")
         .arg("0")
         .arg("--network")

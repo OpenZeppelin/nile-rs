@@ -14,7 +14,7 @@ fn test_declare() {
 
     // Register the account locally
     let temp = assert_fs::TempDir::new().unwrap();
-    temp.copy_from("./tests/fixtures", &["artifacts/contract.json"])
+    temp.copy_from("./tests/fixtures", &["artifacts/cairo1_contract.json"])
         .unwrap();
 
     let cwd = env::current_dir().unwrap();
@@ -33,7 +33,7 @@ fn test_declare() {
 
     let assert = get_snapbox()
         .arg("declare")
-        .arg("contract")
+        .arg("cairo1_contract")
         .arg("-p")
         .arg(private_key_env)
         .arg("--network")
@@ -53,12 +53,12 @@ fn test_declare() {
 }
 
 #[test]
-fn test_estimate_fee() {
+fn test_fee_estimation() {
     let network = "localhost";
 
     // Register the account locally
     let temp = assert_fs::TempDir::new().unwrap();
-    temp.copy_from("./tests/fixtures", &["artifacts/contract.json"])
+    temp.copy_from("./tests/fixtures", &["artifacts/cairo1_contract.json"])
         .unwrap();
 
     // Mock the provider
@@ -72,7 +72,7 @@ fn test_estimate_fee() {
 
     let assert = get_snapbox()
         .arg("declare")
-        .arg("contract")
+        .arg("cairo1_contract")
         .arg("-d")
         .arg("0")
         .arg("--network")

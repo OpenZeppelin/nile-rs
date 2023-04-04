@@ -1,5 +1,7 @@
 use anyhow::{Context, Ok, Result};
-use starknet_accounts::{Account, Call, Declaration, Execution, SingleOwnerAccount};
+use starknet_accounts::{
+    Account, Call, Declaration, Execution, LegacyDeclaration, SingleOwnerAccount,
+};
 use starknet_core::utils::get_selector_from_name;
 use starknet_crypto::FieldElement;
 use starknet_providers::SequencerGatewayProvider;
@@ -7,6 +9,7 @@ use starknet_signers::LocalWallet;
 use std::fmt::Debug;
 use std::sync::Arc;
 
+use crate::common::{get_compiled_class, get_contract_class};
 use crate::core::Deployments;
 use crate::utils::num_str_to_felt;
 use crate::{
@@ -25,7 +28,9 @@ pub struct OZAccount {
 
 impl Debug for OZAccount {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_tuple("").field(&self.inner.address()).finish()
+        f.debug_tuple("address")
+            .field(&self.inner.address().to_string())
+            .finish()
     }
 }
 
@@ -59,14 +64,31 @@ impl OZAccount {
         })
     }
 
+    /// Declare Cairo 1 artifacts
+    pub fn declare(
+        &self,
+        contract_name: &str,
+    ) -> Result<Declaration<SingleOwnerAccount<SequencerGatewayProvider, LocalWallet>>> {
+        let contract_artifact = get_contract_class(contract_name)?;
+        let compiled_class_hash = get_compiled_class(contract_name)?.class_hash()?;
+
+        // We need to flatten the ABI into a string first
+        let flatten_class = contract_artifact.flantten().unwrap();
+
+        let declaration = self
+            .inner
+            .declare(Arc::new(flatten_class), compiled_class_hash);
+        Ok(declaration)
+    }
+
     /// Declare Cairo 0 artifacts
     pub fn legacy_declare(
         &self,
         contract_name: &str,
-    ) -> Result<Declaration<SingleOwnerAccount<SequencerGatewayProvider, LocalWallet>>> {
+    ) -> Result<LegacyDeclaration<SingleOwnerAccount<SequencerGatewayProvider, LocalWallet>>> {
         let contract_artifact = get_legacy_contract_class(contract_name)?;
 
-        let declaration = self.inner.declare(Arc::new(contract_artifact));
+        let declaration = self.inner.declare_legacy(Arc::new(contract_artifact));
         Ok(declaration)
     }
 
@@ -87,6 +109,56 @@ impl OZAccount {
 
     /// Deploy contracts through UDC
     pub fn deploy(
+        &self,
+        contract_name: &str,
+        salt: u32,
+        unique: bool,
+        calldata: Vec<String>,
+    ) -> Result<(
+        Execution<SingleOwnerAccount<SequencerGatewayProvider, LocalWallet>>,
+        FieldElement,
+    )> {
+        let contract_artifact = get_contract_class(contract_name)?;
+        let class_hash = contract_artifact.class_hash()?;
+        let constructor_calldata = normalize_calldata(calldata);
+
+        let mut calldata = vec![
+            class_hash,
+            salt.into(),
+            if unique {
+                FieldElement::ONE
+            } else {
+                FieldElement::ZERO
+            },
+            constructor_calldata.len().into(),
+        ];
+        constructor_calldata
+            .iter()
+            .for_each(|item| calldata.push(*item));
+
+        let address = udc_deployment_address(
+            class_hash,
+            salt.into(),
+            unique,
+            &constructor_calldata,
+            self.address,
+        )?;
+
+        Ok((
+            Execution::new(
+                vec![Call {
+                    to: UDC_ADDRESS,
+                    selector: SELECTOR_DEPLOYCONTRACT,
+                    calldata,
+                }],
+                &self.inner,
+            ),
+            address,
+        ))
+    }
+
+    /// Deploy legacy contracts through UDC
+    pub fn legacy_deploy(
         &self,
         contract_name: &str,
         salt: u32,

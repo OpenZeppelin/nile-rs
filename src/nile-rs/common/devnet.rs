@@ -1,5 +1,5 @@
-use anyhow::{Context, Ok, Result};
-use reqwest::Client;
+use anyhow::{bail, Context, Ok, Result};
+use reqwest::{Client, StatusCode};
 use serde::Deserialize;
 use serde_json;
 use url::Url;
@@ -25,6 +25,12 @@ pub async fn get_predeployed_accounts(network: &str) -> Result<Vec<OZAccount>> {
         .await
         .with_context(|| format!("Failed to get the accounts from `{}`", &endpoint))?;
 
+    if !StatusCode::is_success(&res.status()) {
+        bail!(
+            "Failed to get the accounts from `{}`.\nAre you pointing to a devnet node?",
+            &endpoint
+        )
+    }
     let body = res.text().await?;
 
     let predeployed_accounts: Vec<PredeployedAccount> = serde_json::from_str(&body)?;
