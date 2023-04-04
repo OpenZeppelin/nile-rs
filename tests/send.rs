@@ -58,7 +58,7 @@ fn test_send() {
 }
 
 #[test]
-fn test_estimate_fee() {
+fn test_fee_estimation() {
     let network = "localhost";
     let temp = assert_fs::TempDir::new().unwrap();
 
