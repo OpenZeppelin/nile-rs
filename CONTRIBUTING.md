@@ -41,9 +41,13 @@ If the required subsection does not exist yet under **Unreleased**, create it!
 
 This is similar than other Rust projects, with the difference that you must run test on a single thread with `cargo stest`.
 
-```shell
+```
 git clone https://github.com/ericnordelo/nile-rs
+```
+```
 cd nile-rs
+```
+```
 cargo stest
 ```
 
