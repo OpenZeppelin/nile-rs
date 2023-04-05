@@ -62,6 +62,9 @@ async fn main() -> Result<()> {
         cli::Commands::GetAccounts(cmd) => {
             cmd.run().await?;
         }
+        cli::Commands::Clean(cmd) => {
+            cmd.run().await?;
+        }
     };
 
     Ok(())
