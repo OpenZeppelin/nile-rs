@@ -68,7 +68,7 @@ pub enum Commands {
     #[clap(about = "Query the registered accounts from the given network")]
     GetAccounts(GetAccounts),
 
-    #[clap(about = "Remove artifacts from workspace")]
+    #[clap(about = "Remove artifacts and contract deployments ")]
     Clean(Clean),
 }
 

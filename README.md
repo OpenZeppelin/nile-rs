@@ -169,17 +169,6 @@ Nile-rs is a rust binary application, and while we plan to improve the distribut
     }
     ```
 
-12. Clean the workspace
-
-    ```
-    nile-rs clean
-    ```
-    ```
-    ✅ Removed deployments directory
-    ✅ Cleaned Scarb artifacts
-    ✨ Workspace clean, keep going!
-    ```
-
 ## License
 
 Nile is released under the MIT License.
