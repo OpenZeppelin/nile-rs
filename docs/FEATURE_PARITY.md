@@ -18,7 +18,7 @@
 | node                   |        | [#12](https://github.com/OpenZeppelin/nile-rs/issues/12)
 | compile                | ✅      | [#1](https://github.com/OpenZeppelin/nile-rs/issues/1)
 | run                    | ✅      | [#13](https://github.com/OpenZeppelin/nile-rs/issues/13)
-| clean                  |        | [#14](https://github.com/OpenZeppelin/nile-rs/issues/14)
+| clean                  | ✅      | [#14](https://github.com/OpenZeppelin/nile-rs/issues/14)
 | version                | ✅      |
 
 ## Scripting
