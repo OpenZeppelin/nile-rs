@@ -39,13 +39,15 @@ If the required subsection does not exist yet under **Unreleased**, create it!
 
 ### Set up
 
-This is no different than other Rust projects.
+This is similar than other Rust projects, with the difference that you must run test on a single thread with `cargo stest`.
 
 ```shell
 git clone https://github.com/ericnordelo/nile-rs
 cd nile-rs
-cargo test
+cargo stest
 ```
+
+Make sure there's no devnet node up when running the test suite, because this will make some tests fail.
 
 ### Useful Commands
 
@@ -64,7 +66,7 @@ cargo test
 - Run all tests:
 
   ```shell
-  cargo test --all-features --workspace
+  cargo stest
   ```
 
 - Check to see if there are code formatting issues
