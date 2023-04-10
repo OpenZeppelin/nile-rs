@@ -1,4 +1,5 @@
 mod call;
+mod clean;
 mod compile;
 mod counterfactual_address;
 mod declare;
@@ -14,6 +15,7 @@ mod setup;
 mod status;
 
 pub use call::Call;
+pub use clean::Clean;
 pub use compile::Compile;
 pub use counterfactual_address::CounterfactualAddress;
 pub use declare::{DeclareV1, DeclareV2 as Declare};

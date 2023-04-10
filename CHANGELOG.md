@@ -26,3 +26,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The `get-nonce` command
 - The `get-balance` command
 - The `get-accounts` command
+- The `clean` command
