@@ -16,10 +16,13 @@ doc = false
 anyhow = "1.0.69"
 async-trait = "0.1.64"
 clap = { version = "4.1.4", features = ["derive"] }
-cairo-lang-starknet = "1.0.0-alpha.6"
+cairo-lang-starknet = { version = "1.0.0-alpha.6", git = "https://github.com/starkware-libs/cairo.git", rev = "439da05a" }
 dotenv = "0.15.0"
 figment = { version = "0.10", features = ["toml", "env", "test"] }
-scarb = "0.1.0"
+
+# This was necessary because of how scarb 0.1.0 was managing the Cairo compiler dependencies.
+# The issue was fixed in scarb 0.2.0-alpha, and we will update accordingly when we upgrade it.
+scarb = { version = "0.1.0", git = "https://github.com/ericnordelo/scarb.git", branch = "fix/cairo-dependencies" }
 serde = "1.0.152"
 serde_json = "1.0.93"
 starknet-accounts = { git = "https://github.com/xJonathanLEI/starknet-rs", rev = "e72cc0a" }

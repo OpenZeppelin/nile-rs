@@ -92,7 +92,7 @@ version = "0.1.0"
 
 [dependencies]
 tokio = { version = "1"}
-nile-rs = { git = "https://github.com/OpenZeppelin/nile-rs/", tag = "v0.1.0-rc.1"}
+nile-rs = { git = "https://github.com/OpenZeppelin/nile-rs/", tag = "v0.1.0-rc.2"}
 "#;
 
 pub const EXAMPLE_SCRIPT: &str = r#"// Requires a devnet node running
