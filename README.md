@@ -1,3 +1,5 @@
+> Disclaimer: this project is deprecated and no longer maintained. Check out [scarb](https://docs.swmansion.com/scarb/) instead.
+
 # OpenZeppelin | Nile ⛵ - Rust version
 
 [![Coverage Status](https://codecov.io/gh/OpenZeppelin/nile-rs/graph/badge.svg)](https://codecov.io/gh/OpenZeppelin/nile-rs)
